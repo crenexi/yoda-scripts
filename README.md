@@ -1,6 +1,6 @@
 ## CXG-*
 
-**Crenexi Git** Utilities
+| **Crenexi Git** Utilities
 
 ```
 cxg-release-start.sh
@@ -9,9 +9,7 @@ cxg-release-finish.sh
 
 ## CXR-*
 
-**Crenexi React** Utilities
-
----
+| **Crenexi React** Utilities
 
 ```
 cxr-component [dest] [name]
@@ -20,7 +18,7 @@ cxr-container [dest] [name]
 
 ## CXI-*
 
-**Crenexi Image** Utilities
+| **Crenexi Image** Utilities
 
 ```
 cxi-ogs-to-triple.sh [dir]
