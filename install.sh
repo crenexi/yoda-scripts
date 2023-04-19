@@ -1,18 +1,14 @@
 # Installs all of these scripts at ~/bin
 
-scripts_names=(
-  "release-start"
-  "release-finish"
-  "cxr-component"
-  "cxr-container"
+folders=(
+  "./cxg"
+  "./cxi"
+  "./cxr"
 )
 
-# Folder copies
-sudo cp -r ./cxr-templates/ ~/bin
-
 # Script copies
-for name in "${scripts_names[@]}"
+for folder in "${folders[@]}"
 do
-  cp ./$name.sh ~/bin
-  chmod +x ~/bin/$name.sh
+  cp -r $folder ~/bin
+  find ~/bin/$folder -type f -exec chmod 755 -- {} +
 done
