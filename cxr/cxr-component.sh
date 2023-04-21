@@ -3,7 +3,7 @@ template_dir="./templates/react-component"
 comp_dest=${1%/}
 comp_name=$2
 
-info () {
+info() {
   printf "## ${1}\n"
 }
 

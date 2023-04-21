@@ -1,19 +1,19 @@
 #!/bin/bash
 set -e
 
-colorRed=$'\e[1;31m'
-colorGreen=$'\e[1;32m'
-colorYellow=$'\e[1;33m'
-colorBlue=$'\e[1;34m'
-colorMagenta=$'\e[1;35m'
-colorCyan=$'\e[1;36m'
-colorEnd=$'\e[0m'
+color_red=$"\e[1;31"
+color_green=$"\e[1;32"
+color_yellow=$"\e[1;33"
+color_blue=$"\e[1;34"
+color_magenta=$"\e[1;35"
+color_cyan=$"\e[1;36"
+color_end=$"\e[0"
 
 info () {
   printf "## ${1}\n"
 }
 
-function readVersion {
+function read_version {
   version=$(cat package.json \
     | grep version \
     | head -1 \
@@ -22,90 +22,90 @@ function readVersion {
     | tr -d '[[:space:]]')
 }
 
-function confirmChecks {
+function confirm_checks {
   while true; do
-    info "${colorBlue}Checks completed${colorEnd}"
+    info "${color_blue}Checks completed${color_end}"
     read -p "Approve checks? [Y/N] " yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* )
-          info "${colorYellow}Cancelled${colorEnd}"
+          info "${color_yellow}Cancelled${color_end}"
           exit 1;;
         * ) echo "Please answer yes or no.";;
     esac
   done
 }
 
-function approveBump {
+function approve_bump {
   # Lint and get version
   npm run lint
-  readVersion
+  read_version
 
   # Approve checks
-  confirmChecks
+  confirm_checks
 
   # No errors; proceed
-  info "${colorGreen}READY TO START RELEASE${colorEnd}"
-  info "Current Version: ${colorMagenta}v${version}${colorEnd}"
+  info "${color_green}READY TO START RELEASE${color_end}"
+  info "Current Version: ${color_magenta}v${version}${color_end}"
 }
 
-function confirmVersion {
+function confirm_version {
   while true; do
-    info "Version '${colorBlue}v${newVersion}${colorEnd}' will be created."
+    info "Version '${color_blue}v${new_version}${color_end}' will be created."
     read -p "Proceed to create release? [Y/N] " yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* )
-          info "${colorYellow}Cancelled${colorEnd}"
+          info "${color_yellow}Cancelled${color_end}"
           exit 1;;
         * ) echo "Please answer yes or no.";;
     esac
   done
 }
 
-function promptVersion {
-  read -p "Enter new semantic version (exclude the v): " newVersion
+function prompt_version {
+  read -p "Enter new semantic version (exclude the v): " new_version
 
   # Ensure something was entered
-  if [ -z "$newVersion" ]; then
-    info "${colorRed}/!\ NO VERSION SUPPLIED. EXITING.${colorEnd}"
+  if [ -z "$new_version" ]; then
+    info "${colorRed}/!\ NO VERSION SUPPLIED. EXITING.${color_end}"
     exit 1
   fi
 
-  confirmVersion
+  confirm_version
 }
 
-function bumpPackageJson {
-	npm version $newVersion --no-git-tag-version
+function bump_packagejson {
+	npm version $new_version --no-git-tag-version
   git add .
-  git commit -m "Bumped version to v${newVersion}"
+  git commit -m "Bumped version to v${new_version}"
 
-  info "${colorGreen}BUMPED VERSION TO v${newVersion}!${colorEnd}"
+  info "${color_green}BUMPED VERSION TO v${new_version}!${color_end}"
 }
 
-function startRelease {
+function start_release {
   git checkout develop
   git pull origin develop
   git push origin develop
-  git flow release start v${newVersion}
+  git flow release start v${new_version}
 }
 
 function main {
-  info "##########"
+  echo "##########"
   info "Affirming checks..."
-  approveBump
+  approve_bump
 
-  info "##########"
+  echo "##########"
   info "Confirming version..."
-  promptVersion
+  prompt_version
 
-  info "##########"
+  echo "##########"
   info "Starting release..."
-  startRelease
+  start_release
 
-  info "##########"
+  echo "##########"
   info "Bumping version..."
-  bumpPackageJson
+  bump_packagejson
 }
 
 # Check for unstaged commits
@@ -115,6 +115,6 @@ if [ -d ".git" ]; then
 	if [ -z "${changes}" ]; then
     main
 	else
-		echo "/!\ ${colorYellow}Please commit staged files prior to bumping${colorEnd}"
+		echo "/!\ ${color_yellow}Please commit staged files prior to bumping${color_end}"
 	fi
 fi

@@ -2,7 +2,7 @@
 # of size 1920w and 1040w, then applies a light compression. The parameter
 # is the directory, where this will be applied to the whole directory
 
-function produce {
+function produce() {
   name=$1
   width=$2
   if [[ -z "$name" ]]; then exit; fi
@@ -16,7 +16,7 @@ function produce {
   ffmpeg -i "$file_og" -compression_level 75 -y "$file"
 }
 
-function each_ext {
+function each_ext() {
   dir=$1
   ext=$2
 

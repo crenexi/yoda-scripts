@@ -1,6 +1,7 @@
 # Installs all of these scripts at ~/bin
 
 folders=(
+  "./cxa"
   "./cxg"
   "./cxi"
   "./cxr"
