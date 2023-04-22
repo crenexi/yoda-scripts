@@ -33,7 +33,7 @@ function read_version {
   version=$(cat package.json \
     | grep version \
     | head -1 \
-    | awk -F: '{ print "$2" }' \
+    | awk -F: '{ print $2 }' \
     | sed 's/[",]//g' \
     | tr -d '[[:space:]]')
 }
@@ -61,13 +61,13 @@ function approve_bump {
   confirm_checks
 
   # No errors; proceed
-  info_success "READY TO START RELEASE"
-  echo "Current Version: ${cmagenta}v${version}${cend}"
+  echo_success "READY TO START RELEASE"
+  echo -e "Current Version: ${cmagenta}v${version}${cend}"
 }
 
 function confirm_version {
   while true; do
-    echo "Version '${cblue}v${new_version}${cend}' will be created."
+    echo -e "Version '${cblue}v${new_version}${cend}' will be created."
     read -p "Proceed to create release? [Y/N] " yn
     case "$yn" in
         [Yy]* ) break;;
@@ -84,7 +84,7 @@ function prompt_version {
 
   # Ensure something was entered
   if [ -z "$new_version" ]; then
-    info_error "NO VERSION SUPPLIED. EXITING."
+    echo_error "NO VERSION SUPPLIED. EXITING."
     exit 1
   fi
 
@@ -96,7 +96,7 @@ function bump_packagejson {
   git add .
   git commit -m "Bumped version to v${new_version}"
 
-  info_success "BUMPED VERSION TO v${new_version}!"
+  echo_success "BUMPED VERSION TO v${new_version}!"
 }
 
 function start_release {
@@ -107,16 +107,16 @@ function start_release {
 }
 
 function main {
-  info_block "Affirming checks..."
+  echo_header "Affirming checks..."
   approve_bump
 
-  info_block "Confirming version..."
+  echo_header "Confirming version..."
   prompt_version
 
-  info_block "Starting release..."
+  echo_header "Starting release..."
   start_release
 
-  info_block "Bumping version..."
+  echo_header "Bumping version..."
   bump_packagejson
 }
 

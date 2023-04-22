@@ -33,7 +33,7 @@ function readVersion {
   version=$(cat package.json \
     | grep version \
     | head -1 \
-    | awk -F: '{ print "$2" }' \
+    | awk -F: '{ print $2 }' \
     | sed 's/[",]//g' \
     | tr -d '[[:space:]]')
 }
@@ -103,7 +103,7 @@ function finishRelease {
   echo_success "RELEASE PUSHED TO ORIGIN"
 
   # List branches
-  info "Local branches:\n"
+  echo "Local branches:"
   git branch --list
 }
 
