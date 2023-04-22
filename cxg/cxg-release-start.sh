@@ -1,35 +1,51 @@
 #!/bin/bash
+# This script assumes it's ran in a Git repo that follows Git Flow
 set -e
 
-color_red=$"\e[1;31"
-color_green=$"\e[1;32"
-color_yellow=$"\e[1;33"
-color_blue=$"\e[1;34"
-color_magenta=$"\e[1;35"
-color_cyan=$"\e[1;36"
-color_end=$"\e[0"
+##########
+## HELPERS
 
-info () {
-  printf "## ${1}\n"
+# Utility colors
+cred="$\e[1;31m"
+cgreen="$\e[1;32m"
+cyellow="$\e[1;33m"
+cblue="$\e[1;34m"
+cmagenta="$\e[1;35m"
+ccyan="$\e[1;36m"
+cend="$\e[0m"
+
+# Utility echos
+echo_info () { printf "${cblue}${1}${cend}\n" }
+echo_success() { printf "${cgreen}${1}${cend}\n" }
+echo_warn() { printf "/!\ ${cyellow}${1}${cend}\n" }
+echo_error() { printf "/!\ ${cred}${1}${cend}\n" }
+echo_header() {
+  message="$1"
+  color="$2"
+  echo "##########"
+  printf "## ${color}${message}${cend}\n"
 }
+
+##########
+## MAIN
 
 function read_version {
   version=$(cat package.json \
     | grep version \
     | head -1 \
-    | awk -F: '{ print $2 }' \
+    | awk -F: '{ print "$2" }' \
     | sed 's/[",]//g' \
     | tr -d '[[:space:]]')
 }
 
 function confirm_checks {
   while true; do
-    info "${color_blue}Checks completed${color_end}"
+    echo_info "Checks completed"
     read -p "Approve checks? [Y/N] " yn
-    case $yn in
+    case "$yn" in
         [Yy]* ) break;;
         [Nn]* )
-          info "${color_yellow}Cancelled${color_end}"
+          echo_info "Cancelled"
           exit 1;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -45,18 +61,18 @@ function approve_bump {
   confirm_checks
 
   # No errors; proceed
-  info "${color_green}READY TO START RELEASE${color_end}"
-  info "Current Version: ${color_magenta}v${version}${color_end}"
+  info_success "READY TO START RELEASE"
+  echo "Current Version: ${cmagenta}v${version}${cend}"
 }
 
 function confirm_version {
   while true; do
-    info "Version '${color_blue}v${new_version}${color_end}' will be created."
+    echo "Version '${cblue}v${new_version}${cend}' will be created."
     read -p "Proceed to create release? [Y/N] " yn
-    case $yn in
+    case "$yn" in
         [Yy]* ) break;;
         [Nn]* )
-          info "${color_yellow}Cancelled${color_end}"
+          echo_info "Cancelled"
           exit 1;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -68,7 +84,7 @@ function prompt_version {
 
   # Ensure something was entered
   if [ -z "$new_version" ]; then
-    info "${colorRed}/!\ NO VERSION SUPPLIED. EXITING.${color_end}"
+    info_error "NO VERSION SUPPLIED. EXITING."
     exit 1
   fi
 
@@ -76,11 +92,11 @@ function prompt_version {
 }
 
 function bump_packagejson {
-	npm version $new_version --no-git-tag-version
+	npm version "$new_version" --no-git-tag-version
   git add .
   git commit -m "Bumped version to v${new_version}"
 
-  info "${color_green}BUMPED VERSION TO v${new_version}!${color_end}"
+  info_success "BUMPED VERSION TO v${new_version}!"
 }
 
 function start_release {
@@ -91,20 +107,16 @@ function start_release {
 }
 
 function main {
-  echo "##########"
-  info "Affirming checks..."
+  info_block "Affirming checks..."
   approve_bump
 
-  echo "##########"
-  info "Confirming version..."
+  info_block "Confirming version..."
   prompt_version
 
-  echo "##########"
-  info "Starting release..."
+  info_block "Starting release..."
   start_release
 
-  echo "##########"
-  info "Bumping version..."
+  info_block "Bumping version..."
   bump_packagejson
 }
 
@@ -115,6 +127,6 @@ if [ -d ".git" ]; then
 	if [ -z "${changes}" ]; then
     main
 	else
-		echo "/!\ ${color_yellow}Please commit staged files prior to bumping${color_end}"
+		echo_warn "Please commit staged files prior to bumping"
 	fi
 fi

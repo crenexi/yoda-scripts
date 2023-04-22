@@ -1,30 +1,54 @@
-template_dir="./templates/react-component"
+#!/bin/bash
+# The script assumes that the template_dir directory exists and has some
+# specific files with placeholders for NAME.
 
-comp_dest=${1%/}
-comp_name=$2
+##########
+## HELPERS
 
-info() {
-  printf "## ${1}\n"
-}
+# Utility colors
+cred="$\e[1;31m"
+cgreen="$\e[1;32m"
+cblue="$\e[1;34m"
+cend="$\e[0m"
+
+# Utility echos
+echo_info () { printf "${cblue}${1}${cend}\n" }
+echo_success() { printf "${cgreen}${1}${cend}\n" }
+echo_error() { printf "/!\ ${cred}${1}${cend}\n" }
 
 # Ensure args are provided
 if [[ -z "$comp_dest" ]] || [[ -z "$comp_name" ]]; then
-  info "MUST INCLUDE DIRECTORY AND NAME ARGUMENTS"
-  info "Example: cxr-component ./src/shared/components/ui"
+  echo_error "MUST INCLUDE DIRECTORY AND NAME ARGUMENTS"
+  echo "Example: cxr-container ./src/shared/components/ui"
   exit 1
 fi
 
-# Start
-comp_dir="$comp_dest/$comp_name"
-info "Creating $comp_dir component"
+##########
+## CONFIG
+
+template_dir="./templates/react-component"
+
+##########
+## MAIN
+
+# Ensure args are provided
+comp_dest=${1%/}
+comp_name=$2
+if [[ -z "$comp_dest" ]] || [[ -z "$comp_name" ]]; then
+  echo_error "MUST INCLUDE DIRECTORY AND NAME ARGUMENTS"
+  echo "Example: cxr-component ./src/shared/components/ui"
+  exit 1
+fi
 
 # Component folder
-mkdir -p $comp_dir
+comp_dir="$comp_dest/$comp_name"
+echo_info "Creating $comp_dir component"
+mkdir -p "$comp_dir"
 
 # Component files
-sed -e "s/NAME/$comp_name/g" $template_dir/template_index.js > $comp_dir/index.js
-sed -e "s/NAME/$comp_name/g" $template_dir/template_NAME.jsx > $comp_dir/$comp_name.jsx
-sed -e "s/NAME/$comp_name/g" $template_dir/template_NAME.scss > $comp_dir/$comp_name.scss
+sed -e "s/NAME/$comp_name/g" "$template_dir/template_index.js" > "$comp_dir/index.js"
+sed -e "s/NAME/$comp_name/g" "$template_dir/template_NAME.jsx" > "$comp_dir/$comp_name.jsx"
+sed -e "s/NAME/$comp_name/g" "$template_dir/template_NAME.scss" > "$comp_dir/$comp_name.scss"
 
 # Done
-info "$comp_name component ready"
+echo_success "$comp_name component ready"
