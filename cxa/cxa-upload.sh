@@ -66,8 +66,13 @@ function read_dest_path() {
   read -e dest_path
 
   # Ensure slash is first char
-  if [[ "${dest_path:0:1}" == "/" ]]; then
-    dest_path=${dest_path:1}
+  if [[ "${dest_path:0:1}" != "/" ]]; then
+    dest_path="/${dest_path}"
+  fi
+
+  # Ensure slash is last char
+  if [[ "${dest_path: -1}" != "/" ]]; then
+    dest_path="${dest_path}/"
   fi
 }
 
