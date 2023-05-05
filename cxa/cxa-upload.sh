@@ -68,10 +68,11 @@ function read_dest_path() {
 
 # Prepare the aws s3 command and do dry run
 function exec_prerun() {
-  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}/assets/${dest_path}\""
+  path="/assets/${dest_path}"
+  path="${path//\/\//\/}" # removes dup slashes
 
-  # Remove dup slashes
-  aws_cmd="${aws_cmd//\/\//\/}"
+  # Command to run
+  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}${path}\""
 
   # Add recursive if src is a directory
   if [ -d "$sel_src" ]; then
