@@ -68,7 +68,7 @@ function read_dest_path() {
 
 # Prepare the aws s3 command and do dry run
 function exec_prerun() {
-  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}/assets/${dest_path}/\""
+  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}/assets/${dest_path}\""
 
   # Remove dup slashes
   aws_cmd="${aws_cmd//\/\//\/}"
