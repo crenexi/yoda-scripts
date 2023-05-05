@@ -99,4 +99,4 @@ read_source
 read_dest_base
 read_dest_path
 exec_prerun
-# exec_confirm
+exec_confirm
