@@ -64,21 +64,14 @@ function read_dest_base() {
 function read_dest_path() {
   echo_header "Select destination path [/]:"
   read -e dest_path
-
-  # Ensure slash is first char
-  if [[ "${dest_path:0:1}" != "/" ]]; then
-    dest_path="/${dest_path}"
-  fi
-
-  # Ensure slash is last char
-  if [[ "${dest_path: -1}" != "/" ]]; then
-    dest_path="${dest_path}/"
-  fi
 }
 
 # Prepare the aws s3 command and do dry run
 function exec_prerun() {
-  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}/assets/${dest_path}\""
+  aws_cmd="aws s3 cp \"$sel_src\" \"${sel_dest}/assets/${dest_path}/\""
+
+  # Remove dup slashes
+  aws_cmd="${aws_cmd//\/\//\/}"
 
   # Add recursive if src is a directory
   if [ -d "$sel_src" ]; then
