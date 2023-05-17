@@ -5,6 +5,7 @@ folders=(
   "./cxg"
   "./cxi"
   "./cxr"
+  "./cxx"
 )
 
 # Script copies
