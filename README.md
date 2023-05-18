@@ -21,7 +21,10 @@ path_from_crenexi
 | **System** checks and runs
 
 ```bash
-cxx-versions.sh
+cxx-vars.sh # Basic system vars
+cxx-versions.sh # Important versions
+cxx-verify.sh # Important CLIs
+cxx-battery.sh # Laptop battery
 ```
 
 ### CXG
