@@ -20,11 +20,27 @@ path_from_crenexi
 ### CXX
 | **System** checks and runs
 
+Basic info:
+
 ```bash
 cxx-vars.sh # Basic system vars
 cxx-versions.sh # Important versions
 cxx-verify.sh # Important CLIs
 cxx-battery.sh # Laptop battery
+```
+
+Actions:
+```bash
+sudo run-update.sh
+run-chrome.sh
+run-chrome-update.sh
+run-spotify.sh
+```
+
+Processes:
+```bash
+use-ssh.sh
+use-vpn.sh
 ```
 
 ### CXG
