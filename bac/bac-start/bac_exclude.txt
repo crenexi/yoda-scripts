@@ -1,0 +1,13 @@
+.npm
+.cache
+Trash
+node_modules
+/cache
+/lock
+/run
+/tmp
+/spool
+/log
+Dropbox/
+Documents/System-Backup/
+HDD_Documents/System-Backup/

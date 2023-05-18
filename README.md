@@ -5,7 +5,7 @@ Add this to `.bashrc`
 ```bash
 # Crenexi scripts
 function path_from_crenexi() {
-  cx_dirs=("cxa" "cxg" "cxi" "cxr" "cxx")
+  cx_dirs=("bac" "cxa" "cxg" "cxi" "cxr" "cxx")
 
   for dir in "${cx_dirs[@]}"; do
     export PATH="$HOME/bin/$dir:$PATH"
@@ -16,32 +16,6 @@ path_from_crenexi
 ```
 
 # Groups
-
-### CXX
-| **System** checks and runs
-
-Basic info:
-
-```bash
-cxx-vars.sh # Basic system vars
-cxx-versions.sh # Important versions
-cxx-verify.sh # Important CLIs
-cxx-battery.sh # Laptop battery
-```
-
-Actions:
-```bash
-sudo run-update.sh
-run-chrome.sh
-run-chrome-update.sh
-run-spotify.sh
-```
-
-Processes:
-```bash
-use-ssh.sh
-use-vpn.sh
-```
 
 ### CXG
 | **Crenexi Git** Utilities
@@ -72,6 +46,29 @@ cxa-upload
 ```
 WORK IN PROGRESS
 # cxi-ogs-to-triple.sh [dir]
+```
+
+### CXX
+| **System** checks and runs
+
+```bash
+cxx-vars.sh # Basic system vars
+cxx-versions.sh # Important versions
+cxx-verify.sh # Important CLIs
+cxx-battery.sh # Laptop battery
+```
+
+```bash
+sudo run-backup.sh
+sudo run-update.sh
+run-chrome.sh
+run-chrome-update.sh
+run-spotify.sh
+```
+
+```bash
+use-ssh.sh
+use-vpn.sh
 ```
 
 # Aliases
