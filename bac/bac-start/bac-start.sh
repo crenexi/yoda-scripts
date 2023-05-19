@@ -4,7 +4,7 @@
 ## CONFIG #######################################
 #################################################
 
-nodry=true
+auto=true
 user="crenexi"
 
 # Destination
@@ -24,8 +24,9 @@ sources=(
 )
 
 # Exclude and include files
-exclude_from="./bac_exclude.txt"
+exclude_from="$(dirname "$0")/bac_exclude.txt"
 include_from="./bac_include.txt"
+file_backup_time="/etc/crenexi/backup-time"
 
 #################################################
 #### HELPERS ####################################
@@ -60,7 +61,7 @@ function echo_sources() {
 function confirm_dir_key() {
   host=$(hostname)
   dir_key="${user}@${host}"
-  notice "DIRECTORY KEY" $dir_key
+  info "DIRECTORY KEY: $dir_key"
 
   PS3="## IS THIS THE RIGHT DIRECTORY KEY? "
   select sel in Yes Cancel; do
@@ -131,27 +132,32 @@ function catch_include_dne() {
 #################################################
 
 function backup_from() {
-  # Build exclude options
-  exclude=""
-  for path in "${exclude_paths[@]}"; do
-    exclude+="--exclude=\"${path}\" "
-  done
+  local from="$1"
+  local to="$dest$1"
 
-  rsync_params="-aAXv --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$1\" \"$dest$1\""
-  rsync_cmd_dry="sudo rsync --dry-run $rsync_params"
-  rsync_cmd="sudo rsync $rsync_params"
+  # Rsync params, suppress error logs, and pipe to pv for progress
+  local params="-aAXv --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\" 2>/dev/null"
+
+  # Rsync commands
+  rsync_cmd_dry="sudo rsync --dry-run $params"
+  rsync_cmd="sudo rsync $params"
 
   # Run backup, or dry run
   if [ "$is_dry_run" = true ]; then
-    eval $rsync_cmd_dry
-
-    notice "COMPLETED DRY RUN OF" "${rsync_cmd}"
+    eval "$rsync_cmd_dry"
   else
-    eval $rsync_cmd
+    eval "$rsync_cmd"
   fi
 }
 
+function log_backup() {
+  mkdir -p "$(dirname "$backup_time")"
+  touch "$backup_time"
+}
+
 function run_backup() {
+  trap cancel INT
+
   # Preflight checks
   catch_dest_dne
   catch_exclude_dne
@@ -166,12 +172,12 @@ function run_backup() {
     info "Backing up \"${src}\""
     backup_from $src
   done
+
+  # Finished
+  log_backup
 }
 
 function run_backup_dry() {
-  # Skip if --nodry is supplied
-  if [ "$nodry" = true ]; then return; fi
-
   info "Starting dry run..."
   is_dry_run=true
   run_backup
@@ -190,7 +196,28 @@ function review_run () {
 ## MAIN #########################################
 #################################################
 
-confirm_dir_key
-run_backup_dry
-review_run
-confirm_run
+function start_auto() {
+  info "Auto enabled. Starting backup with no prompts"
+
+  if [[ -f "$file_backup_time" && $(find "$file_backup_time" -mtime +1) ]]; then
+    info "Skipping backup. Last backup performed within 24 hours."
+  else
+    info "Starting backup..."
+    is_dry_run=false
+    run_backup
+    info "Backup complete!"
+  fi
+}
+
+function start_manual() {
+  confirm_dir_key
+  run_backup_dry
+  review_run
+  confirm_run
+}
+
+if [ "$auto" = true ]; then
+  start_auto
+else
+  start_manual
+fi

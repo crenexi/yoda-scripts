@@ -1,5 +1,7 @@
 .npm
 .cache
+.steam
+.Trash-1000
 Trash
 node_modules
 /cache
@@ -9,5 +11,8 @@ node_modules
 /spool
 /log
 Dropbox/
+Games
+SteamLibrary
+VMware
 Documents/System-Backup/
 HDD_Documents/System-Backup/
