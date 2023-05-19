@@ -7,16 +7,19 @@
 auto=true
 user="crenexi"
 
-# Destination
-# "/nas/Panda-Private/Backup_Systems"
-# "/media/crenexi/CH-Backups/Backups_Systems"
-dest="/nas/Panda-Private/Backup_Systems"
-
 # Sources
 sources=(
   "/home/crenexi/" \
   "/hdd/" \
 )
+
+# Destination
+# "/nas/Panda-Private/Backup_Systems"
+# "/media/crenexi/CH-Backups/Backups_Systems"
+host=$(hostname)
+dir_key="${user}@${host}"
+dir_parent="/nas/Panda-Private/Backup_Systems"
+dest="$dir_parent/$dir_key"
 
 # Exclude and include files
 exclude_from="$(dirname "$0")/bac_exclude.txt"
@@ -54,9 +57,8 @@ function echo_sources() {
 #################################################
 
 function confirm_dir_key() {
-  host=$(hostname)
-  dir_key="${user}@${host}"
   info "DIRECTORY KEY: $dir_key"
+  info "DESTINATION: $dest"
 
   PS3="## IS THIS THE RIGHT DIRECTORY KEY? "
   select sel in Yes Cancel; do
