@@ -1,8 +1,6 @@
 .git
 .npm
 .cache
-.steam
-.minecraft
 .vmware
 .vscode
 .Trash-1000
@@ -15,8 +13,6 @@ node_modules
 /spool
 /log
 Dropbox/
-Games
-SteamLibrary
 VMware
 Documents/System-Backup/
 HDD_Documents/System-Backup/
