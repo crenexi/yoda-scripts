@@ -226,7 +226,7 @@ function run_backup() {
 
     # Execute backup
     info "Backing up \"${src}\"..."
-    # backup_from $src
+    backup_from $src
   done
 
   # Finished
