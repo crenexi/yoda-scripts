@@ -153,7 +153,7 @@ function run_backup() {
     [ -d $dest$src ] || mkdir -p $dest$src
 
     # Execute backup
-    info "Backing up \"${src}\""
+    info "Backing up \"${src}\"..."
     backup_from $src
   done
 
