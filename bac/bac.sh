@@ -75,6 +75,25 @@ function confirm_run() {
 #### PREFLIGHT CHECKS ###########################
 #################################################
 
+function catch_config_dne() {
+  local variables=("id" "user" "auto" "sources" "dir_parent" "log_parent")
+  local missing_variables=()
+
+  for var in "${variables[@]}"; do
+      if [[ -z ${!var} ]]; then
+          missing_variables+=("$var")
+      fi
+  done
+
+  if [[ ${#missing_variables[@]} -gt 0 ]]; then
+      echo "Error: The following variables are not defined or empty:"
+      for var in "${missing_variables[@]}"; do
+          echo "$var"
+      done
+      exit 1
+  fi
+}
+
 function catch_dest_dne() {
   if [ -d $dest ]; then
     info "Destination found!"
@@ -102,6 +121,23 @@ function catch_include_dne() {
 #################################################
 ## FUNCTIONS ####################################
 #################################################
+
+function configure_vars() {
+  catch_config_dne
+
+  # Destination
+  host=$(hostname)
+  dir_key="${user}@${host}"
+  dest="$dir_parent/$dir_key"
+
+  # Exclude and include files
+  exclude_from="$dot/bac_exclude.txt"
+  include_from="$dot/bac_include.txt"
+
+  # Log files
+  file_stamp="$log_parent/$dir_key/stamp_$id"
+  file_log="$log_parent/$dir_key/log_$id"
+}
 
 function backup_from() {
   local from="$1"
@@ -201,6 +237,8 @@ function start_manual() {
 }
 
 function main() {
+  configure_vars
+
   if [ "$auto" = true ]; then
     start_auto
   else

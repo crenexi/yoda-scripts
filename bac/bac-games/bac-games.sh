@@ -6,14 +6,16 @@ dot="$(dirname "$0")"
 ## CONFIG #######################################
 #################################################
 
-id="home"
+id="games"
 user="crenexi"
 auto=true
 
 # Sources
 sources=(
-  "/home/crenexi/" \
-  "/hdd/" \
+  "/home/crenexi/.steam/" \
+  "/home/crenexi/.minecraft/" \
+  "/home/crenexi/Games/" \
+  "/hdd/SteamLibrary/" \
 )
 
 # Backup parent (backup will be at "dest_parent/user@host")
