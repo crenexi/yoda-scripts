@@ -102,6 +102,7 @@ Backups strategy (see Notion)
 
 ### Misc
 
+- Crenexi alert: `cx-info`, `cx-warn`
 - Enabled services: `sys-enabled`
 - NordVPN: `nv`, `nvs`, `nvc`, `nvd`
 - Copy/paste: `setclip` and `getclip`

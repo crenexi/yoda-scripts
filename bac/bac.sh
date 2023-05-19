@@ -23,6 +23,20 @@ function cancel() {
   exit 1
 }
 
+function notify() {
+  # Ensure this is Ubuntu and notify-send exists
+  if [[ "$(lsb_release -si)" == "Ubuntu" ]] && command -v notify-send >/dev/null 2>&1; then
+    # Detect the name of the display in use and the user using the display
+    local display=":$(ls /tmp/.X11-unix/* | sed 's#/tmp/.X11-unix/X##' | head -n 1)"
+    local user=$(who | grep '('$display')' | awk '{print $1}' | head -n 1)
+    local uid=$(id -u $user)
+
+    # Crenexi-themed alert
+    icon="/home/crenexi/Documents/System-Assets/Icons/crenexi_fav_main.png"
+    sudo -u $user DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus notify-send -u normal -t 5000 -i "$icon" "$1" "$2"
+  fi
+}
+
 function echo_sources() {
   for src in "${sources[@]}"; do echo $src; done;
 }
@@ -160,6 +174,7 @@ function backup_from() {
 
 function log_backup() {
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  time_human=$(date +"%B %-d at %-I:%M%P")
 
   # Log the timestamp in the stamp file
   mkdir -p "$(dirname "$file_stamp")"
@@ -170,6 +185,9 @@ function log_backup() {
   cat "$file_log_temp" >> "$file_log"
   rm "$file_log_temp"
   echo "-----------------------" >> "$file_log"
+
+  # Notification
+  notify "Backup Complete" "Finished $id backup on $time_human!"
 }
 
 function run_backup() {
@@ -190,7 +208,7 @@ function run_backup() {
 
     # Execute backup
     info "Backing up \"${src}\"..."
-    backup_from $src
+    # backup_from $src
   done
 
   # Finished
@@ -218,15 +236,9 @@ function review_run () {
 
 function start_auto() {
   info "Auto enabled. Starting backup with no prompts"
-
-  if [[ -f "$file_stamp" && $(find "$file_stamp" -mtime +1) ]]; then
-    info "Skipping backup. Last backup performed within 24 hours."
-  else
-    info "Starting backup..."
-    is_dry_run=false
-    run_backup
-    info "Backup complete!"
-  fi
+  is_dry_run=false
+  run_backup
+  info "Backup complete!"
 }
 
 function start_manual() {
