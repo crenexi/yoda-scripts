@@ -76,8 +76,8 @@ Backups strategy (see Notion)
 
 1. Install: `./bac/install.sh`
 2. Install: make sure `pv` is installed
-3. Configure: edit files at `~/bin/bac/bac-start`
-4. Test: `sudo bac-start.sh`
+3. Configure: edit files at `~/bin/bac/bac-{type}/`
+4. Test: `sudo bac-{type}.sh`
 
 # Aliases
 

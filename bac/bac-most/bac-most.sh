@@ -25,7 +25,7 @@ sources=(
 
 # Exclude and include files
 exclude_from="$(dirname "$0")/bac_exclude.txt"
-include_from="./bac_include.txt"
+include_from="$(dirname "$0")/bac_include.txt"
 file_backup_time="/etc/crenexi/backup-time"
 
 #################################################
@@ -151,8 +151,8 @@ function backup_from() {
 }
 
 function log_backup() {
-  mkdir -p "$(dirname "$backup_time")"
-  touch "$backup_time"
+  mkdir -p "$(dirname "$file_backup_time")"
+  touch "$file_backup_time"
 }
 
 function run_backup() {

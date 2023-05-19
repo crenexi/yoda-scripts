@@ -1,6 +1,10 @@
+.git
 .npm
 .cache
 .steam
+.minecraft
+.vmware
+.vscode
 .Trash-1000
 Trash
 node_modules
