@@ -109,8 +109,6 @@ function catch_config_dne() {
 }
 
 function catch_recent_backup() {
-  echo "catch recent backup"
-
   # If no backup file, proceed
   if [[ -f "$file_stamp" ]]; then
     # Note: all units should be in seconds
@@ -120,7 +118,6 @@ function catch_recent_backup() {
 
     # If recent backup, exit
     if ! [ $time_diff -gt $interval ]; then
-      echo "gt interval"
       cancel "Recent backup performed. Skipping"
     fi
   fi
