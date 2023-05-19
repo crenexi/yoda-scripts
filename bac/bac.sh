@@ -90,7 +90,7 @@ function confirm_run() {
 #################################################
 
 function catch_config_dne() {
-  local variables=("id" "user" "auto" "sources" "dir_parent" "log_parent")
+  local variables=("id" "user" "auto" "interval" "sources" "dir_parent" "log_parent")
   local missing_variables=()
 
   for var in "${variables[@]}"; do
@@ -105,6 +105,24 @@ function catch_config_dne() {
           echo "$var"
       done
       exit 1
+  fi
+}
+
+function catch_recent_backup() {
+  echo "catch recent backup"
+
+  # If no backup file, proceed
+  if [[ -f "$file_stamp" ]]; then
+    # Note: all units should be in seconds
+    current_time=$(date +%s) # current time
+    last_backup_time=$(stat -c %Y "$file_stamp") # backup time
+    time_diff=$((current_time - last_backup_time)) # timeago
+
+    # If recent backup, exit
+    if ! [ $time_diff -gt $interval ]; then
+      echo "gt interval"
+      cancel "Recent backup performed. Skipping"
+    fi
   fi
 }
 
@@ -236,6 +254,7 @@ function review_run () {
 
 function start_auto() {
   info "Auto enabled. Starting backup with no prompts"
+  catch_recent_backup
   is_dry_run=false
   run_backup
   info "Backup complete!"

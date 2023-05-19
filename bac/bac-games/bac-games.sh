@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dot="$(dirname "$0")"
+days15=$((15 * 24 * 60 * 60))
 
 #################################################
 ## CONFIG #######################################
@@ -9,6 +10,7 @@ dot="$(dirname "$0")"
 id="games"
 user="crenexi"
 auto=true
+interval=$days15
 
 # Sources
 sources=(

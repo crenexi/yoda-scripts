@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dot="$(dirname "$0")"
+days5=$((5 * 24 * 60 * 60))
 
 #################################################
 ## CONFIG #######################################
@@ -9,6 +10,7 @@ dot="$(dirname "$0")"
 id="most"
 user="crenexi"
 auto=true
+interval=$days5
 
 # Sources
 sources=(

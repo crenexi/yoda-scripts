@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dot="$(dirname "$0")"
+days2=$((2 * 24 * 60 * 60))
 
 #################################################
 ## CONFIG #######################################
@@ -9,6 +10,7 @@ dot="$(dirname "$0")"
 id="home"
 user="crenexi"
 auto=true
+interval=$days2
 
 # Sources
 sources=(
