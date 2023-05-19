@@ -1,5 +1,12 @@
 #!/bin/bash
 # Checkup on some specific cron jobs
 
-# Cron logs over the past week
-grep -E 'CRON.*crenexi' /var/log/syslog | grep "$(date -d '1 week ago' '+%b %e')"
+echo "#######################################"
+echo "## RECENT CRENEXI CRONS ###############"
+echo "#######################################"
+grep -E 'CRON.*crenexi' /var/log/syslog | tail -n 100
+
+echo "#######################################"
+echo "## CRENEXI CRONS ######################"
+echo "#######################################"
+crontab -l
