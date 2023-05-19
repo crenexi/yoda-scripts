@@ -163,7 +163,7 @@ function log_backup() {
 
   # Log the timestamp in the stamp file
   mkdir -p "$(dirname "$file_stamp")"
-  echo "$timestamp" > "/etc/crenexi/$dir_key/stamp"
+  echo "$timestamp" > "$file_stamp"
 
   # Log rsync output and cleanup
   echo "Backup for: $dir_key" > "$file_log"
