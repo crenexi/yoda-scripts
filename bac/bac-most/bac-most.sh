@@ -33,5 +33,6 @@ log_parent="/etc/crenexi"
 ## RUN ##########################################
 #################################################
 
+sleep 600 # delay for 10 minutes
 source "$dot/../bac.sh"
 main
