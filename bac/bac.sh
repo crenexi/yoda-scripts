@@ -115,7 +115,6 @@ function on_complete() {
   echo "Backup for: $dir_key" > "$file_log"
   cat "$file_log_temp" >> "$file_log"
   rm "$file_log_temp"
-  echo "-----------------------" >> "$file_log"
 
   # Notification and standard log
   notify "Backup Complete" "Finished $id backup on $time_human!"
