@@ -5,7 +5,8 @@ function main() {
   configure_vars
 
   if [ "$auto" = true ]; then
-    info "Starting automatic backup"
+    echo "--------------------------------------------------"
+    info "Starting automatic \"$id\" backup"
     catch_recent_backup
     is_dry_run=false
     run_backup
