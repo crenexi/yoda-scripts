@@ -1,4 +1,4 @@
-# Basics
+#### Basics
 .git
 .npm
 node_modules
@@ -7,8 +7,7 @@ node_modules
 /spool
 /log
 /var/log
-
-# Trash/cache/temp
+#### Trash/cache/temp
 .cache
 Trash*
 Cache
@@ -17,25 +16,21 @@ tmp
 temp
 *.tmp
 *.temp
-
-# Code and VM
+#### Code and VM
 .vscode
 .vmware
 VMware/
-
-# App exclusions
+#### App exclusions
 .config/google-chrome/
 .config/discord/
 .mozilla/firefox/
 Dropbox/
 snap/discord/
 snap/firefox/
-
-# Misc exclusions
+#### Misc exclusions
 System-Backup/
 .local/share/icons
-
-# Games (Backup G)
+#### Games (Backup G)
 .steam
 .minecraft
 SteamLibrary/
