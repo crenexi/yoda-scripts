@@ -87,7 +87,7 @@ function exec_prerun() {
 function exec_confirm() {
   echo "Review command to be executed:"
   echo_header "$aws_cmd" "$cyellow"
-  read -p "Ready to proceed? (Y/N): " confirm
+  read -p "Ready to proceed? (y/n): " confirm
 
   if [[ "$confirm" == [yY] ]]; then
     eval "$aws_cmd"

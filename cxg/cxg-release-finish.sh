@@ -41,7 +41,7 @@ function readVersion {
 function confirmChecks {
   while true; do
     echo_info "Checks completed"
-    read -p "Approve checks? [Y/N] " yn
+    read -p "Approve checks? [y/n] " yn
     case "$yn" in
         [Yy]* ) break;;
         [Nn]* )
@@ -54,7 +54,7 @@ function confirmChecks {
 
 function confirmRelease {
   while true; do
-    read -p "Are you sure to proceed? [Y/N] " yn
+    read -p "Are you sure to proceed? [y/n] " yn
     case "$yn" in
         [Yy]* ) break;;
         [Nn]* )

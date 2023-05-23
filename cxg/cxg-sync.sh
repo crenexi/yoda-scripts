@@ -7,7 +7,7 @@ function sync_origin() {
 }
 
 function sync_deleted_branches() {
-  read -p "Delete local branches that have been deleted on the remote? [y/N]: " -n 1 -r
+  read -p "Delete local branches that have been deleted on the remote? [y/n]: " -n 1 -r
   echo
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then

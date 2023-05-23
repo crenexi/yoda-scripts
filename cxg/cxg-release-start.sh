@@ -41,7 +41,7 @@ function read_version {
 function confirm_checks {
   while true; do
     echo_info "Checks completed"
-    read -p "Approve checks? [Y/N] " yn
+    read -p "Approve checks? [y/n] " yn
     case "$yn" in
         [Yy]* ) break;;
         [Nn]* )
@@ -68,7 +68,7 @@ function approve_bump {
 function confirm_version {
   while true; do
     echo -e "Version '${cblue}v${new_version}${cend}' will be created."
-    read -p "Proceed to create release? [Y/N] " yn
+    read -p "Proceed to create release? [y/n] " yn
     case "$yn" in
         [Yy]* ) break;;
         [Nn]* )
