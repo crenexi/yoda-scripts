@@ -9,7 +9,7 @@ days5=$((5 * 24 * 60 * 60))
 
 id="most"
 user="crenexi"
-auto=true
+auto=false
 interval=$days5
 
 # Sources

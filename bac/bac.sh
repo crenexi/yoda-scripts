@@ -131,7 +131,14 @@ function backup_from() {
   local to="$dest$1"
 
   # Rsync params, suppress error logs, and pipe to pv for progress
-  local params="-aAXv --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\" > \"$file_log_temp\" 2>&1"
+  local params="-aAXv --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\""
+
+  # Log to both if manual, or else just log to file
+  if [ "$auto" != true ]; then
+    params+=" 2>&1 | tee \"$file_log_temp\""
+  else
+    params+=" > \"$file_log_temp\" 2>&1"
+  fi
 
   # Rsync commands
   rsync_cmd_dry="rsync --dry-run $params"
