@@ -21,3 +21,6 @@ VMware
 Documents/System-Backup/
 HDD_Documents/System-Backup/
 .config/google-chrome
+snap/discord
+snap/firefox
+.local/share/icons
