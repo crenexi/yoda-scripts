@@ -11,11 +11,11 @@ id="most"
 user="crenexi"
 auto=false
 interval=$days5
+delay=600 # 10m delay
 
 # Sources
 sources=(
   "/home/crenexi/" \
-  "/hdd/" \
   "/etc/" \
   "/usr/local/" \
   "/opt/" \
@@ -23,8 +23,13 @@ sources=(
   "/var/" \
 )
 
+# If victory, add /hdd
+if [[ "$(hostname)" == "victory" ]]; then
+  sources+=("/hdd/")
+fi
+
 # Backup parent (backup will be at "dest_parent/user@host")
-dir_parent="/nas/Panda-Private/Backup_Systems"
+dest_parent="/nas/Panda-Private/Backup_Systems"
 
 # Log parent (logs will be at "log_parent/user@host")
 log_parent="/etc/crenexi"
@@ -33,6 +38,5 @@ log_parent="/etc/crenexi"
 ## RUN ##########################################
 #################################################
 
-sleep 600 # delay for 10 minutes
-source "$dot/../bac.sh"
+source "$dot/../backup.sh"
 main

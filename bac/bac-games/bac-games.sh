@@ -9,8 +9,9 @@ days15=$((15 * 24 * 60 * 60))
 
 id="games"
 user="crenexi"
-auto=true
+auto=false
 interval=$days15
+sleep=1200 # 20m delay
 
 # Sources
 sources=(
@@ -21,7 +22,7 @@ sources=(
 )
 
 # Backup parent (backup will be at "dest_parent/user@host")
-dir_parent="/nas/Panda-Private/Backup_Systems"
+dest_parent="/nas/Panda-Private/Backup_Games"
 
 # Log parent (logs will be at "log_parent/user@host")
 log_parent="/etc/crenexi"
@@ -30,6 +31,5 @@ log_parent="/etc/crenexi"
 ## RUN ##########################################
 #################################################
 
-sleep 1200 # delay for 20 minutes
-source "$dot/../bac.sh"
+source "$dot/../backup.sh"
 main

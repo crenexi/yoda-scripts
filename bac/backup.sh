@@ -1,6 +1,8 @@
 #!/bin/bash
 
 function main() {
+  sleep "$delay"
+
   catch_config_dne
   configure_vars
 
@@ -25,7 +27,7 @@ function main() {
 #################################################
 
 function catch_config_dne() {
-  local variables=("id" "user" "auto" "interval" "sources" "dir_parent" "log_parent")
+  local variables=("id" "user" "auto" "interval" "delay" "sources" "dest_parent" "log_parent")
   local missing_variables=()
 
   for var in "${variables[@]}"; do
@@ -93,11 +95,11 @@ function configure_vars() {
   # Destination
   host=$(hostname)
   dir_key="${user}@${host}"
-  dest="$dir_parent/$dir_key"
+  dest="$dest_parent/$dir_key"
 
   # Exclude and include files
-  exclude_from="$dot/bac_exclude.txt"
-  include_from="$dot/bac_include.txt"
+  exclude_from="$dot/../exclude.txt" # same for all backups
+  include_from="$dot/include.txt" # backup-specific
 
   # Log files
   file_stamp="$log_parent/$dir_key/bac-${id}_time"
@@ -158,8 +160,11 @@ function run_backup() {
   # Temp rsync log
   file_log_temp=$(mktemp)
 
-  # Ensure destination, exclude file, and include file exist
-  if ! [ -d $dest ]; then cancel "Destination does not exist!"; fi
+  # Ensure destination parent and folder exist
+  if ! [ -d $dest_parent ]; then cancel "Destination parent does not exist!"; fi
+  if ! [ -d $dest ]; then mkdir "$dest"; fi
+
+  # Ensure exclude and include files exist
   if ! [ -f $exclude_from ]; then cancel "Exclude file does not exist!"; fi
   if ! [ -f $include_from ]; then cancel "Include file does not exist!"; fi
 
