@@ -16,3 +16,4 @@ Dropbox/
 VMware
 Documents/System-Backup/
 HDD_Documents/System-Backup/
+.config/google-chrome
