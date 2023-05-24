@@ -77,20 +77,6 @@ function cancel() {
   exit 1
 }
 
-function notify() {
-  # Ensure this is Ubuntu and notify-send exists
-  if [[ "$(lsb_release -si)" == "Ubuntu" ]] && command -v notify-send >/dev/null 2>&1; then
-    # Detect the name of the display in use and the user using the display
-    local display=":$(ls /tmp/.X11-unix/* | sed 's#/tmp/.X11-unix/X##' | head -n 1)"
-    local user=$(who | grep '('$display')' | awk '{print $1}' | head -n 1)
-    local uid=$(id -u $user)
-
-    # Crenexi-themed alert
-    icon="/home/crenexi/Documents/System-Assets/Icons/crenexi_fav_main.png"
-    su -c "DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus notify-send -u normal -t 5000 -i \"$icon\" \"$1\" \"$2\"" -s /bin/sh $user
-  fi
-}
-
 function configure_vars() {
   # Destination
   host=$(hostname)
@@ -104,6 +90,10 @@ function configure_vars() {
   # Log files
   file_stamp="$log_parent/$dir_key/bac-${id}_time"
   file_log="$log_parent/$dir_key/bac-$id.log"
+
+  # Commands
+  mtn_panda=/home/crenexi/bin/cxx/mtn-panda.sh
+  cxx_notify=/home/crenexi/bin/cxx/cxx-notify.sh
 }
 
 function on_complete() {
@@ -120,7 +110,7 @@ function on_complete() {
   rm "$file_log_temp"
 
   # Notification and standard log
-  notify "Backup Complete" "Finished $id backup on $time_human!"
+  "$cxx_notify" "Backup Complete" "Finished $id backup on $time_human!"
   info "Completed \"$id\" backup at $time_human!"
 }
 
@@ -159,6 +149,11 @@ function run_backup() {
 
   # Temp rsync log
   file_log_temp=$(mktemp)
+
+  # If NAS, ensure it's mounted
+  if [[ $dest == *"/nas/Panda"* ]]; then
+    eval "$mtn_panda";
+  fi
 
   # Ensure destination parent and folder exist
   if ! [ -d $dest_parent ]; then cancel "Destination parent does not exist!"; fi
