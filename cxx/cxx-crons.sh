@@ -5,7 +5,8 @@ function echo_last_backups() {
   dirs=("bac-home" "bac-most" "bac-games")
 
   for dir in "${dirs[@]}"; do
-    filepath="/etc/crenexi/crenexi@$(hostname)/$dir\_time"
+    filepath="/etc/crenexi/crenexi@$(hostname)/${dir}_time"
+    echo "Path: $filepath"
 
     if [ -f "$filepath" ]; then
       echo "$dir: $(cat "$filepath")"
