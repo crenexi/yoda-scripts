@@ -92,7 +92,7 @@ function configure_vars() {
   file_log="$log_parent/$dir_key/bac-$id.log"
 
   # Commands
-  mtn_panda=/home/crenexi/bin/cxx/mtn-panda.sh
+  mnt_panda=/home/crenexi/bin/cxx/mnt-panda.sh
   cxx_notify=/home/crenexi/bin/cxx/cxx-notify.sh
 }
 
@@ -152,7 +152,7 @@ function run_backup() {
 
   # If NAS, ensure it's mounted
   if [[ $dest == *"/nas/Panda"* ]]; then
-    eval "$mtn_panda";
+    eval "$mnt_panda";
   fi
 
   # Ensure destination parent and folder exist
