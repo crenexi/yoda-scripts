@@ -1,8 +1,10 @@
 #!/bin/bash
 
 function main() {
-  sleep "$delay"
+  # Sleep a minimum of 1m
+  sleep "$((60 + delay))"
 
+  # Init config and vars
   catch_config_dne
   configure_vars
 
@@ -11,12 +13,14 @@ function main() {
     info "Starting automatic \"$id\" backup"
     catch_recent_backup
     is_dry_run=false
+    on_start
     run_backup
     on_complete
   else
     confirm_dir_key
     run_backup_dry
     confirm_run
+    on_start
     run_backup
     on_complete
   fi
@@ -96,6 +100,32 @@ function configure_vars() {
   cxx_notify=/home/crenexi/bin/cxx/cxx-notify.sh
 }
 
+function await_panda() {
+  mnt_point="/nas/Panda-Private"
+
+  # 1. Wait until autofs service starts
+  while ! systemctl is-active autofs >/dev/null 2>&1; do
+    echo "Pending autofs start..."
+    sleep 5
+  done
+
+  # 2. Trigger the mount
+  source "$mnt_panda"
+
+  # Wait until specified destination parent is mounted
+  while ! mountpoint -q "$mnt_point"; do
+    echo "Pending $mnt_point mount..."
+    sleep 5
+  done
+
+  echo "Mounted $mnt_point"
+}
+
+function on_start() {
+  time_human=$(date +"%B %-d at %-I:%M%P")
+  "$cxx_notify" "Backup Started" "Starting $id backup on $time_human!"
+}
+
 function on_complete() {
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   time_human=$(date +"%B %-d at %-I:%M%P")
@@ -150,14 +180,12 @@ function run_backup() {
   # Temp rsync log
   file_log_temp=$(mktemp)
 
-  # If NAS, ensure it's mounted
-  if [[ $dest == *"/nas/Panda"* ]]; then
-    eval "$mnt_panda";
-  fi
+  # If destination is Panda, ensure it's mounted
+  if [[ $dest == "/nas/Panda"* ]]; then await_panda; fi
 
   # Ensure destination parent and folder exist
-  if ! [ -d $dest_parent ]; then cancel "Destination parent does not exist!"; fi
-  if ! [ -d $dest ]; then mkdir "$dest"; fi
+  if ! [ -d "$dest_parent" ]; then cancel "Destination parent does not exist!"; fi
+  if ! [ -d "$dest" ]; then mkdir "$dest"; fi
 
   # Ensure exclude and include files exist
   if ! [ -f $exclude_from ]; then cancel "Exclude file does not exist!"; fi
