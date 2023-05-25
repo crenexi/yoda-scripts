@@ -11,7 +11,7 @@ id="games"
 user="crenexi"
 auto=false
 interval=$days15
-sleep=1200 # 20m delay
+delay=1200 # 20m delay
 
 # Sources
 sources=(
