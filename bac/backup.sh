@@ -9,8 +9,7 @@ function main() {
   configure_vars
 
   if [ "$auto" = true ]; then
-    echo "--------------------------------------------------"
-    info "Starting automatic \"$id\" backup"
+    info_stamped "Starting"
     catch_recent_backup
     is_dry_run=false
     on_start
@@ -69,14 +68,26 @@ function catch_recent_backup() {
 #################################################
 
 function info() {
-  echo "## ${1}"
+  if [ "${auto}" = "true" ]; then
+    echo "## ${1}"
+  fi
+}
+
+function info_stamped() {
+  statused="$1" # verb indicating status
+  more_info="$2" # for cancel message
+
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  time_human=$(date +"%B %-d at %-I:%M%P")
+
+  # Notification and standard log
+  "$cxx_notify" "Backup $statused" "$statused $id backup on $time_human! $more_info"
+  info "$statused \"$id\" backup at $time_human! $more_info"
 }
 
 function cancel() {
-  if [ -n "$1" ]; then
-    echo "## Backup cancelled! $1"
-  else
-    echo "## Backup cancelled!"
+  if [ "${auto}" = "true" ]; then
+    info_stamped "Cancelled" "$1"
   fi
   exit 1
 }
@@ -105,7 +116,7 @@ function await_panda() {
 
   # 1. Wait until autofs service starts
   while ! systemctl is-active autofs >/dev/null 2>&1; do
-    echo "Pending autofs start..."
+    info "Pending autofs start..."
     sleep 5
   done
 
@@ -114,11 +125,11 @@ function await_panda() {
 
   # Wait until specified destination parent is mounted
   while ! mountpoint -q "$mnt_point"; do
-    echo "Pending $mnt_point mount..."
+    info "Pending $mnt_point mount..."
     sleep 5
   done
 
-  echo "Mounted $mnt_point"
+  info "Mounted $mnt_point"
 }
 
 function on_start() {
@@ -127,8 +138,7 @@ function on_start() {
 }
 
 function on_complete() {
-  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  time_human=$(date +"%B %-d at %-I:%M%P")
+  info_stamped "Completed"
 
   # Log the timestamp in the stamp file
   mkdir -p "$(dirname "$file_stamp")"
@@ -138,10 +148,6 @@ function on_complete() {
   echo "Backup for: $dir_key" > "$file_log"
   cat "$file_log_temp" >> "$file_log"
   rm "$file_log_temp"
-
-  # Notification and standard log
-  "$cxx_notify" "Backup Complete" "Finished $id backup on $time_human!"
-  info "Completed \"$id\" backup at $time_human!"
 }
 
 #################################################
@@ -197,7 +203,10 @@ function run_backup() {
     [ -d $dest$src ] || mkdir -p $dest$src
 
     # Execute backup
-    info "Backing up \"${src}\"..."
+    if ! [ "$auto" = true ]; then
+      info "Backing up \"${src}\"..."
+    fi
+
     backup_from $src
   done
 }
