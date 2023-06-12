@@ -24,10 +24,10 @@ if [[ "$(hostname)" == "victory" ]]; then
 fi
 
 # Backup parent (backup will be at "dest_parent/user@host")
-dest_parent="/nas/Panda-Private/Backup_Systems"
+dest_parent="/pandora/pandora_crenexi/Backup_Systems"
 
 # Log parent (logs will be at "log_parent/user@host")
-log_parent="/etc/crenexi"
+log_parent="/.cx/logs/bac"
 
 #################################################
 ## RUN ##########################################

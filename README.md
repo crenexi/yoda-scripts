@@ -76,7 +76,7 @@ Backups strategy (see Notion)
 
 1. Install: `./bac/install.sh`
 2. Configure: `~/.cx/bin/bac/bac-most/` (config, excludes, includes)
-3. Execute: `bac-most.sh`; **stamp** and **log** at `/etc/crenexi/{key}/`
+3. Execute: `bac-most.sh`; **stamp** and **log** at `~/.cx/logs/bac/`
 
 # Aliases
 

@@ -107,12 +107,12 @@ function configure_vars() {
   file_log="$log_parent/$dir_key/bac-$id.log"
 
   # Commands
-  mnt_panda=/home/crenexi/bin/cxx/mnt-panda.sh
+  mnt_pandora=/home/crenexi/bin/cxx/mnt-pandora.sh
   cxx_notify=/home/crenexi/bin/cxx/cxx-notify.sh
 }
 
-function await_panda() {
-  mnt_point="/nas/Panda-Private"
+function await_pandora() {
+  mnt_point="/pandora/pandora_crenexi"
 
   # 1. Wait until autofs service starts
   while ! systemctl is-active autofs >/dev/null 2>&1; do
@@ -121,7 +121,7 @@ function await_panda() {
   done
 
   # 2. Trigger the mount
-  source "$mnt_panda"
+  source "$mnt_pandora"
 
   # Wait until specified destination parent is mounted
   while ! mountpoint -q "$mnt_point"; do
@@ -186,8 +186,8 @@ function run_backup() {
   # Temp rsync log
   file_log_temp=$(mktemp)
 
-  # If destination is Panda, ensure it's mounted
-  if [[ $dest == "/nas/Panda"* ]]; then await_panda; fi
+  # If destination is pandora, ensure it's mounted
+  if [[ $dest == "/pandora"* ]]; then await_pandora; fi
 
   # Ensure destination parent and folder exist
   if ! [ -d "$dest_parent" ]; then cancel "Destination parent does not exist!"; fi

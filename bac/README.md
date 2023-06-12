@@ -28,7 +28,7 @@ Before running this script, ensure all required variables (`id`, `user`, `auto`,
 
 ## Assumptions
 
-1. Dependency on `rsync`, `cxx-notify.sh` and `mtn-panda.sh`: assumes `rsync` is installed; assumes the two scripts exist, are executable, and are located at the specified paths
+1. Dependency on `rsync`, `cxx-notify.sh` and `mtn-pandora.sh`: assumes `rsync` is installed; assumes the two scripts exist, are executable, and are located at the specified paths
 
 2. Variable Settings: assumes that all required variables (`id`, `user`, `auto`, `interval`, `delay`, `sources`, `dest_parent`, `log_parent`) are set before it runs
 
