@@ -1,8 +1,8 @@
 #!/bin/bash
-# Installs all of these scripts at ~/bin/bac
+# Installs all of these scripts at ~/.cx/bin/bac
 
 # Ensure bin/bac exists
-dir="$HOME/bin/bac"
+dir="$HOME/.cx/bin/bac"
 mkdir -p "$dir"
 
 rsync -av --delete "." "$dir/"

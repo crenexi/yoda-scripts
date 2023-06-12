@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v tlp-stat &> /dev/null; then
+  echo "Package 'tlp-stat' is not installed. Exiting."
+  exit 1
+fi
+
 sudo tlp-stat -s
 
 printf "+++ Battery\n"

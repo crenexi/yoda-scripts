@@ -1,6 +1,12 @@
 #!/bin/bash
 # format: cxx-notify.sh [title] [message]
 
+# Ensure notify-send exists
+if ! command -v "notify-send" >/dev/null 2>&1; then
+  echo "Package 'notify-send' is not found. Exiting."
+  exit 1
+fi
+
 function notify() {
   # Ensure this is Ubuntu and notify-send exists
   if [[ "$(lsb_release -si)" == "Ubuntu" ]] && command -v notify-send >/dev/null 2>&1; then

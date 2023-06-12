@@ -2,8 +2,15 @@
 
 set -e
 
+# Basic update
+function start_update() {
+  echo "## Update ##################################################"
+  sudo apt update
+}
+
 # Prompt to update Chrome
 function prompt_chrome_update() {
+  echo "## Chrome ###################################################"
   read -p "Update Chrome? (y/n): " confirm_chrome
   if [[ $confirm_chrome == "y" || $confirm_chrome == "Y" ]]; then
     echo "Updating Chrome..."
@@ -13,6 +20,7 @@ function prompt_chrome_update() {
 
 # Prompt for a reboot
 function prompt_reboot() {
+  echo "## Reboot ###################################################"
   read -p "Reboot the system? (y/n): " confirm_reboot
   if [[ $confirm_reboot == "y" || $confirm_reboot == "Y" ]]; then
     echo "Rebooting the system..."
@@ -22,6 +30,7 @@ function prompt_reboot() {
 
 # Prompt for system upgrade
 function prompt_upgrade() {
+  echo "## Upgrade ##################################################"
   read -p "Perform system upgrade? (y/n): " perform_upgrade
   if [[ $perform_upgrade == "y" || $perform_upgrade == "Y" ]]; then
     sudo apt dist-upgrade -y
@@ -33,7 +42,13 @@ function prompt_upgrade() {
   fi
 }
 
-sudo apt update
+# Done
+function finish_update() {
+  echo; echo "Update complete!"
+}
+
+start_update
 prompt_chrome_update
 prompt_upgrade
+finish_update
 exit 0

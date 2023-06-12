@@ -2,6 +2,8 @@
 # Ensure deborphan and gio packages are available
 
 function cleanup_packages() {
+  echo "## Packages cleanup #########################################"
+
   # APT cleanup
   echo "Autoclean and autoremove..."
   sudo apt autoclean
@@ -23,12 +25,16 @@ function cleanup_packages() {
 }
 
 function cleanup_caches() {
+  echo "## Cache cleanup ############################################"
+
   # Remove cached lists of available packages; helps with indexing/refreshing
   echo "Removing cached lists..."
   sudo rm -rf /var/lib/apt/lists/*
 }
 
 function cleanup_trash() {
+  echo "## Trash cleanup ############################################"
+
   trash_files="$HOME/.local/share/Trash/files"
 
   # Ensure trash dir exists
@@ -61,8 +67,8 @@ function cleanup_trash() {
 ## Main #########################################
 #################################################
 
-echo "Starting cleanup operations!"
 cleanup_packages
 cleanup_caches
 cleanup_trash
+echo
 echo "Finished cleanup operations!"

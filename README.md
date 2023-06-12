@@ -8,7 +8,7 @@ function path_from_crenexi() {
   cx_dirs=("bac" "cxa" "cxg" "cxi" "cxr" "cxx")
 
   for dir in "${cx_dirs[@]}"; do
-    export PATH="$HOME/bin/$dir:$PATH"
+    export PATH="$HOME/.cx/bin/$dir:$PATH"
   done
 }
 
@@ -75,7 +75,7 @@ use-vpn.sh
 Backups strategy (see Notion)
 
 1. Install: `./bac/install.sh`
-2. Configure: `~/bin/bac/bac-most/` (config, excludes, includes)
+2. Configure: `~/.cx/bin/bac/bac-most/` (config, excludes, includes)
 3. Execute: `bac-most.sh`; **stamp** and **log** at `/etc/crenexi/{key}/`
 
 # Aliases
