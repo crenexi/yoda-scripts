@@ -27,7 +27,7 @@ fi
 dest_parent="/pandora/pandora_crenexi/Backup_Systems"
 
 # Log parent (logs will be at "log_parent/user@host")
-log_parent="/.cx/logs/bac"
+log_parent="/home/crenexi/.cx/logs/bac"
 
 #################################################
 ## RUN ##########################################
