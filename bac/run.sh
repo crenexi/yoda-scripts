@@ -2,7 +2,7 @@
 source /home/crenexi/.bashrc
 
 bac="/home/crenexi/.cx/bin/bac"
-logs=/home/crenexi/.cx/logs"
+logs="/home/crenexi/.cx/logs"
 
 "$bac/bac-home.sh" >> "$logs/bac.log" 2>&1
 "$bac/bac-most.sh" >> "$logs/bac.log" 2>&1

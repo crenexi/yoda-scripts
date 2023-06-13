@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # Backup game-specific files
-cd /home/crenexi/bin/bac/bac-games
+cd /home/crenexi/.cx/bin/bac/bac-games
 sudo ./bac-games.sh

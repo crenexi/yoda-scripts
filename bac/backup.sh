@@ -107,8 +107,8 @@ function configure_vars() {
   file_log="$log_parent/$dir_key/bac-$id.log"
 
   # Commands
-  mnt_pandora=/home/crenexi/bin/cxx/mnt-pandora.sh
-  cxx_notify=/home/crenexi/bin/cxx/cxx-notify.sh
+  mnt_pandora=/home/crenexi/.cx/bin/cxx/mnt-pandora.sh
+  cxx_notify=/home/crenexi/.cx/bin/cxx/cxx-notify.sh
 }
 
 function await_pandora() {
