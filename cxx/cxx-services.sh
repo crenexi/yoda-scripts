@@ -25,4 +25,4 @@ service_status "autofs"
 service_status "postgresql"
 
 # Crenexi
-service_status "crenexi-backup.service"
+service_status "cx-backup.service"
