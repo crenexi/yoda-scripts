@@ -32,7 +32,7 @@ echo_last_backups
 echo "## SEE MORE ###################################################"
 echo "LAST BACKUP LOG"
 echo_last_backups_less
-echo "CRENEXI CRON LOG"
+echo "CRENEXI BACKUP LOG"
 echo "  cat $logs/bac.log | less -F"
 echo "ROOT/USER CRONTABS"
 echo "  sudo crontab -l"
