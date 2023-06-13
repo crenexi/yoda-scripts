@@ -1,13 +1,17 @@
 #!/bin/bash
 # Checkup on some specific cron jobs
 
-logs="$HOME/.cx/logs/bac"
+host=$(hostname)
+dir_logs="$HOME/.cx/logs"
+dir_bac="$dir_logs/bac/crenexi@${host}"
+
+logs="$HOME/.cx/logs/bac/$dir_key"
 
 function echo_last_backups() {
   dirs=("bac-home" "bac-most" "bac-games")
 
   for dir in "${dirs[@]}"; do
-    filepath="$logs/${dir}_time"
+    filepath="$dir_bac/${dir}_time"
 
     if [ -f "$filepath" ]; then
       echo "$dir: $(cat "$filepath")"
@@ -19,7 +23,7 @@ function echo_last_backups_less() {
   dirs=("bac-home" "bac-most" "bac-games")
 
   for dir in "${dirs[@]}"; do
-    filepath="$logs/$dir\.log"
+    filepath="$dir_bac/$dir\.log"
 
     if [ -f "$filepath" ]; then
       echo "  $(cat "$filepath") | less -F"
@@ -33,7 +37,7 @@ echo "## SEE MORE ###################################################"
 echo "LAST BACKUP LOG"
 echo_last_backups_less
 echo "CRENEXI BACKUP LOG"
-echo "  cat $logs/bac.log | less -F"
+echo "  cat $dir_logs/bac.log | less -F"
 echo "ROOT/USER CRONTABS"
 echo "  sudo crontab -l"
 echo "  chrontab -l"
