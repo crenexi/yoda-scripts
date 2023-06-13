@@ -1,27 +1,15 @@
 #!/bin/bash
 
 function main() {
-  # Sleep a minimum of 1m
-  sleep "$((60 + delay))"
+  sleep "$((60 + $delay))" # sleep a minimum of 1m
+  catch_config_dne # validate configuration
+  catch_recent_backup # skip if recent backup
+  configure_vars # create script variables
 
-  # Init config and vars
-  catch_config_dne
-  configure_vars
-
-  if [ "$auto" = true ]; then
-    info_stamped "Starting"
-    catch_recent_backup
-    is_dry_run=false
-    run_backup
-    on_complete
-  else
-    confirm_dir_key
-    run_backup_dry
-    confirm_run
-    info_stamped "Starting"
-    run_backup
-    on_complete
-  fi
+  # Complete backup
+  info_stamped "Starting"
+  run_backup
+  on_complete
 }
 
 #################################################
@@ -29,7 +17,7 @@ function main() {
 #################################################
 
 function catch_config_dne() {
-  local variables=("id" "user" "auto" "interval" "delay" "sources" "dest_parent" "log_parent")
+  local variables=("id" "user" "is_dry_run" "interval" "delay" "sources" "dest_parent" "log_parent")
   local missing_variables=()
 
   for var in "${variables[@]}"; do
@@ -42,6 +30,25 @@ function catch_config_dne() {
     echo "Error: The following variables are not defined or empty:"
     for var in "${missing_variables[@]}"; do
       echo "$var"
+    done
+    exit 1
+  fi
+}
+
+function catch_script_deps() {
+  local scripts=("$mnt_pandora" "$cxx_notify")
+  local missing_scripts=()
+
+  for script in "${scripts[@]}"; do
+    if ! [ -f "$script" ]; then
+      missing_scripts+=("$script")
+    fi
+  done
+
+  if [ ${#missing_scripts[@]} -gt 0 ]; then
+    echo "Error: The following scripts are missing:"
+    for script in "${missing_scripts[@]}"; do
+      echo "$script"
     done
     exit 1
   fi
@@ -67,9 +74,7 @@ function catch_recent_backup() {
 #################################################
 
 function info() {
-  if [ "${auto}" = "true" ]; then
-    echo "## ${1}"
-  fi
+  echo "## ${1}"
 }
 
 function info_stamped() {
@@ -85,9 +90,7 @@ function info_stamped() {
 }
 
 function cancel() {
-  if [ "${auto}" = "true" ]; then
-    info_stamped "Cancelled" "$1"
-  fi
+  info_stamped "Cancelled" "$1"
   exit 1
 }
 
@@ -102,8 +105,8 @@ function configure_vars() {
   include_from="$dot/include.txt" # backup-specific
 
   # Log files
-  file_stamp="$log_parent/$dir_key/bac-${id}_time"
-  file_log="$log_parent/$dir_key/bac-$id.log"
+  file_stamp="$log_parent/bac-${id}_time"
+  file_log="$log_parent/bac-$id.log"
 
   # Commands
   mnt_pandora=/home/crenexi/.cx/bin/cxx/mnt-pandora.sh
@@ -115,7 +118,6 @@ function await_pandora() {
 
   # 1. Wait until autofs service starts
   while ! systemctl is-active autofs >/dev/null 2>&1; do
-    info "Pending autofs start..."
     sleep 5
   done
 
@@ -129,7 +131,13 @@ function await_pandora() {
 }
 
 function on_complete() {
-  info_stamped "Completed"
+  action_text="Completed"
+  if [ "$is_dry_run" = true ]; then
+    action_text+=" dry"
+  fi
+
+  # Log and notify
+  info_stamped "$action_text"
 
   # Log the timestamp in the stamp file
   mkdir -p "$(dirname "$file_stamp")"
@@ -150,14 +158,7 @@ function backup_from() {
   local to="$dest$1"
 
   # Rsync params, suppress error logs, and pipe to pv for progress
-  local params="-aAXv --no-links --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\""
-
-  # Log to both if manual, or else just log to file
-  if [ "$auto" != true ]; then
-    params+=" 2>&1 | tee \"$file_log_temp\""
-  else
-    params+=" > \"$file_log_temp\" 2>&1"
-  fi
+  local params="-aAXv --no-links --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\" > \"$file_log_temp\" 2>&1"
 
   # Rsync commands
   rsync_cmd_dry="rsync --dry-run $params"
@@ -173,6 +174,11 @@ function backup_from() {
 
 function run_backup() {
   trap cancel INT
+
+  # Note if dry run
+  if [ "$is_dry_run" = true ]; then
+    info "Starting dry run..."
+  fi
 
   # Temp rsync log
   file_log_temp=$(mktemp)
@@ -193,65 +199,9 @@ function run_backup() {
     # Ensure directory exists at dest
     [ -d $dest$src ] || mkdir -p $dest$src
 
-    # Execute backup
-    if ! [ "$auto" = true ]; then
-      info "Backing up \"${src}\"..."
-    fi
+    # Log each src backing up; for testing
+    # info "Backing up \"${src}\"..."
 
     backup_from $src
-  done
-}
-
-#################################################
-## MANUAL BACKUP PROCESS ########################
-#################################################
-
-function confirm_dir_key() {
-  info "DIRECTORY KEY: $dir_key"
-  info "DESTINATION: $dest"
-
-  PS3="## IS THIS THE RIGHT DIRECTORY KEY? "
-  select sel in Yes Cancel; do
-  case $sel in
-    "Yes")
-      info "Backing up ${dir_key}!"
-      break;;
-    "Cancel")
-      cancel "Fix Directory Key!"
-      break;;
-    *)
-      cancel
-      break;;
-    esac
-  done
-}
-
-function run_backup_dry() {
-  info "Starting dry run..."
-  is_dry_run=true
-  run_backup
-  info "Dry run complete!"
-}
-
-function confirm_run() {
-  # Echo summary of backup parameters
-  info "SOURCES"; for src in "${sources[@]}"; do echo $src; done;
-  info "DESTINATION"; echo "${dest}"
-  info "EXCLUSIONS"; cat $exclude_from
-  info "INCLUSIONS"; cat $include_from
-
-  PS3="## PROCEED TO RUN BACKUP? "
-  select sel in Proceed Cancel; do
-  case $sel in
-    "Proceed")
-      is_dry_run=false
-      break;;
-    "Cancel")
-      cancel
-      break;;
-    *)
-      cancel
-      break;;
-    esac
   done
 }

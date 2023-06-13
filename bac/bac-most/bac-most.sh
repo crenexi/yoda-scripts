@@ -9,7 +9,7 @@ days7=$((5 * 24 * 60 * 60))
 
 id="most"
 user="crenexi"
-auto=false
+is_dry_run=true
 interval=$days7
 delay=450 # 7m delay
 

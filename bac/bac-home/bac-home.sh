@@ -9,7 +9,7 @@ days2=$((2 * 24 * 60 * 60))
 
 id="home"
 user="crenexi"
-auto=false
+is_dry_run=true
 interval=$days2
 delay=0
 

@@ -9,7 +9,7 @@ days10=$((10 * 24 * 60 * 60))
 
 id="games"
 user="crenexi"
-auto=false
+is_dry_run=true
 interval=$days10
 delay=900 # 15m delay
 
