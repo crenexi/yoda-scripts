@@ -12,14 +12,13 @@ function main() {
     info_stamped "Starting"
     catch_recent_backup
     is_dry_run=false
-    on_start
     run_backup
     on_complete
   else
     confirm_dir_key
     run_backup_dry
     confirm_run
-    on_start
+    info_stamped "Starting"
     run_backup
     on_complete
   fi
@@ -125,16 +124,8 @@ function await_pandora() {
 
   # Wait until specified destination parent is mounted
   while ! mountpoint -q "$mnt_point"; do
-    info "Pending $mnt_point mount..."
     sleep 5
   done
-
-  info "Mounted $mnt_point"
-}
-
-function on_start() {
-  time_human=$(date +"%B %-d at %-I:%M%P")
-  "$cxx_notify" "Backup Started" "Starting $id backup on $time_human!"
 }
 
 function on_complete() {

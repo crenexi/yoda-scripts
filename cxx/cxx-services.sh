@@ -19,5 +19,10 @@ function service_count() {
 }
 
 service_count
+
+# Main
 service_status "autofs"
 service_status "postgresql"
+
+# Crenexi
+service_status "crenexi-backup.service"
