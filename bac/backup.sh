@@ -3,8 +3,8 @@
 function main() {
   sleep "$((60 + $delay))" # sleep a minimum of 1m
   catch_config_dne # validate configuration
-  catch_recent_backup # skip if recent backup
   configure_vars # create script variables
+  catch_recent_backup # skip if recent backup
 
   # Complete backup
   info_stamped "Starting"
@@ -85,7 +85,7 @@ function info_stamped() {
   time_human=$(date +"%B %-d at %-I:%M%P")
 
   # Notification and standard log
-  "$cxx_notify" "Backup $statused" "$statused $id backup on $time_human! $more_info"
+  "$cxx_notify" "Backup $statused - $id" "$statused on $time_human! $more_info"
   info "$statused \"$id\" backup at $time_human! $more_info"
 }
 
@@ -158,7 +158,7 @@ function backup_from() {
   local to="$dest$1"
 
   # Rsync params, suppress error logs, and pipe to pv for progress
-  local params="-aAXv --no-links --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\" > \"$file_log_temp\" 2>&1"
+  local params="-aAXv --no-links --delete --delete-excluded --exclude-from=\"$exclude_from\" --include-from=\"$include_from\" \"$from\" \"$to\" >> \"$file_log_temp\" 2>&1"
 
   # Rsync commands
   rsync_cmd_dry="rsync --dry-run $params"

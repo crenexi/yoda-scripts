@@ -1,1 +1,5 @@
-/spool/cron/crontabs
+# Override exclusion of game-related sources
+.steam
+.minecraft
+SteamLibrary/
+Games/

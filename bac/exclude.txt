@@ -9,6 +9,7 @@ node_modules
 /var/log
 #### Trash/cache/temp
 .cache
+.Trash*
 Trash*
 Cache
 cache
