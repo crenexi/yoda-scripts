@@ -1,3 +1,4 @@
+#!/bin/bash
 # This runs all backup scripts
 source /home/crenexi/.bashrc
 

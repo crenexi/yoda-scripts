@@ -1,7 +1,7 @@
 #!/bin/bash
 # Checkup on some specific cron jobs
 
-logs="$HOME/.cx/logs"
+logs="$HOME/.cx/logs/bac"
 
 function echo_last_backups() {
   dirs=("bac-home" "bac-most" "bac-games")
