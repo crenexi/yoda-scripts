@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dot="$(dirname "$0")"
-days15=$((15 * 24 * 60 * 60))
+days10=$((10 * 24 * 60 * 60))
 
 #################################################
 ## CONFIG #######################################
@@ -10,8 +10,8 @@ days15=$((15 * 24 * 60 * 60))
 id="games"
 user="crenexi"
 auto=false
-interval=$days15
-delay=1200 # 20m delay
+interval=$days10
+delay=900 # 15m delay
 
 # Sources
 sources=(

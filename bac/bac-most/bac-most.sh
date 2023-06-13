@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dot="$(dirname "$0")"
-days5=$((5 * 24 * 60 * 60))
+days7=$((5 * 24 * 60 * 60))
 
 #################################################
 ## CONFIG #######################################
@@ -10,8 +10,8 @@ days5=$((5 * 24 * 60 * 60))
 id="most"
 user="crenexi"
 auto=false
-interval=$days5
-delay=600 # 10m delay
+interval=$days7
+delay=450 # 7m delay
 
 # Sources
 sources=(
