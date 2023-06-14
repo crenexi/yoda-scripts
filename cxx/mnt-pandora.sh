@@ -5,14 +5,14 @@ verify_mount() {
   local mnt_point=$1
 
   if ! ls "$mnt_point" >/dev/null 2>&1; then
-    echo "Failed to mount $mnt_point"
+    echo "## Failed to mount $mnt_point"
     exit 1
   fi
 }
 
 # Ensure autofs is active and enabled; exit otherwise
 if ! systemctl is-active --quiet autofs && ! systemctl is-enabled --quiet autofs; then
-  echo "Autofs service is not active or enabled. Cannot mount pandora."
+  echo "## Autofs service is not active or enabled. Cannot mount pandora."
   exit 1
 fi
 
