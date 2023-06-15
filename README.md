@@ -56,10 +56,17 @@ cxx-vars.sh # Basic system vars
 cxx-versions.sh # Important versions
 cxx-verify.sh # Important CLIs
 cxx-battery.sh # Laptop battery
+cxx-notify.sh # Themed taost
 ```
 
 ```bash
-sudo run-update.sh
+cxx-services.sh # Services preview
+cxx-backups.sh # Peek recent backups
+cxx-cleanup.sh # General cleanup
+cxx-update.sh # Routine updates
+```
+
+```bash
 run-chrome.sh
 run-chrome-update.sh
 run-spotify.sh
@@ -68,6 +75,10 @@ run-spotify.sh
 ```bash
 use-ssh.sh
 use-vpn.sh
+```
+
+```bash
+mnt-pandora.sh
 ```
 
 #### BAC
