@@ -6,6 +6,9 @@ function main() {
   configure_vars # create script variables
   catch_recent_backup # skip if recent backup
 
+  # If destination is pandora, ensure it's mounted
+  if [[ $dest == "/pandora"* ]]; then await_pandora; fi
+
   # Complete backup
   info_stamped "Starting"
   run_backup
@@ -32,6 +35,16 @@ function catch_config_dne() {
       echo "$var"
     done
     exit 1
+  fi
+}
+
+function catch_not_home() {
+  home_network="192.168.1"
+  device_interface="wlp0s20f3"
+  current_ip=$(ip addr show dev $device_interface | grep -oP 'inet \K[\d.]+')
+
+  if ! [[ $current_ip == $home_network* ]]; then
+    cancel "Home network not detected. Exiting."
   fi
 }
 
@@ -116,6 +129,9 @@ function configure_vars() {
 function await_pandora() {
   mnt_point="/pandora/pandora_crenexi"
 
+  # 0. Make sure we're home
+  catch_not_home
+
   # 1. Wait until autofs service starts
   while ! systemctl is-active autofs >/dev/null 2>&1; do
     sleep 5
@@ -182,9 +198,6 @@ function run_backup() {
 
   # Temp rsync log
   file_log_temp=$(mktemp)
-
-  # If destination is pandora, ensure it's mounted
-  if [[ $dest == "/pandora"* ]]; then await_pandora; fi
 
   # Ensure destination parent and folder exist
   if ! [ -d "$dest_parent" ]; then cancel "Destination parent does not exist!"; fi
