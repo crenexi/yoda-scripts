@@ -39,7 +39,7 @@ function catch_config_dne() {
 }
 
 function catch_not_home() {
-  home_network="192.168.1"
+  home_network="192.168.0"
   device_interface="wlp0s20f3"
   current_ip=$(ip addr show dev $device_interface | grep -oP 'inet \K[\d.]+')
 
