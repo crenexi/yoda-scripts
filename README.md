@@ -3,7 +3,7 @@
 Add this to `.bashrc`
 
 ```bash
-# Crenexi scripts
+# Yoda scripts
 function path_from_crenexi() {
   cx_dirs=("bac" "cxa" "cxg" "cxi" "cxr" "cxx")
 
