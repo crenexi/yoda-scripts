@@ -42,9 +42,22 @@ function echo_dest() {
 function read_endpoint() {
   clear
   echo_header "Select S3 destination:"
-  select endpoint in "${endpoints[@]}"; do
-    if [[ -n "$endpoint" ]]; then
+
+  # Print the options vertically
+  for i in "${!endpoints[@]}"; do
+    echo "$((i+1))) ${endpoints[i]}"
+  done
+
+  # Read the user's choice
+  while true; do
+    read -p "Enter your choice (1-${#endpoints[@]}): " choice
+
+    if ((choice >= 1 && choice <= ${#endpoints[@]})); then
+      # Set the selected endpoint
+      endpoint=${endpoints[$((choice-1))]}
       break
+    else
+      echo "Invalid choice, please try again."
     fi
   done
 }
@@ -68,30 +81,25 @@ function edit_insert_new() {
 }
 
 function select_edit_path() {
-  txt_accept="Accept destination"
+  txt_accept="ACCEPT DESTINATION"
   txt_insert="Insert between base/path"
   txt_redo="Insert new path"
 
-  echo_header "Edit path:"
-  select option in "$txt_accept" "$txt_insert" "$txt_redo"; do
+  echo_header "Edit path (1-3):"
+  while true; do
+    echo "1) $txt_accept (DEFAULT)"
+    echo "2) $txt_insert"
+    echo "3) $txt_redo"
+    read -p "Choose an option (1-3): " REPLY
+
+    # Use the default option if the user just presses Enter
+    [[ -z "$REPLY" ]] && REPLY=1
+
     case $REPLY in
-      1) # Accept destination
-        echo "You chose to accept this destination."
-        new_path="" # No new path
-        break
-        ;;
-      2) # Insert between
-        edit_insert_between
-        break
-        ;;
-      3) # Redo path
-        edit_insert_new
-        break
-        ;;
-      *) # Invalid
-        echo "Invalid option. Please choose again."
-        new_path="TEST"
-        ;;
+      1) new_path=""; break ;;
+      2) edit_insert_between; break ;;
+      3) edit_insert_new; break ;;
+      *) echo "Invalid option. Please choose again." ;;
     esac
   done
 }

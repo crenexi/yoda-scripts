@@ -8,10 +8,6 @@ source "$dir/helpers/define-src.sh"
 ##########
 ## Functions
 
-function on_done() {
-  echo_success "Completed upload!"
-}
-
 # Prepare the aws s3 command and do dry run
 function exec_prerun() {
   # Command to run
@@ -34,7 +30,7 @@ function exec_confirm() {
 
   if [[ "$confirm" == [yY] ]]; then
     eval "$aws_cmd"
-    on_done
+    echo_success "Completed upload!"
   fi
 }
 
