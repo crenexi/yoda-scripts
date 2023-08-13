@@ -30,7 +30,7 @@ function exec_confirm() {
 
   if [[ "$confirm" == [yY] ]]; then
     eval "$aws_cmd"
-    echo_success "Completed upload!"
+    echo; echo_success "Completed upload!"
   fi
 }
 

@@ -38,7 +38,7 @@ function select_cmd_type() {
   done
 }
 
-function select_recursive() {
+function prompt_recursive() {
   if [[ $cmd_type != "dirs" ]]; then
     clear
     echo_header "Recursive?"
@@ -48,12 +48,10 @@ function select_recursive() {
       case $input in
         [yY]* )
           is_recursive="true"
-          break
-          ;;
+          break ;;
         [nN]* | "" )
           is_recursive="false"
-          break
-          ;;
+          break ;;
         * )
           echo "Invalid input. (yY, nN, Enter)"
           ;;
@@ -74,6 +72,11 @@ function define_command() {
   # Recursive option
   if [[ $is_recursive == "true" ]]; then
     aws_cmd+=" --recursive"
+  fi
+
+  # Ensure trailing slash
+  if [[ "$dest" != */ ]]; then
+    dest="$dest/"
   fi
 
   case $cmd_type in
@@ -129,7 +132,7 @@ function exec_confirm() {
     echo_header "$cmd_header"
     echo_info "## Location: $dest"
     eval "$aws_cmd"
-    echo_success "Listing complete"
+    echo; echo_success "Listing complete"
   fi
 }
 
@@ -138,6 +141,6 @@ function exec_confirm() {
 
 define_dest
 select_cmd_type
-select_recursive
+prompt_recursive
 define_command
 exec_confirm
