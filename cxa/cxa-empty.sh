@@ -1,225 +1,138 @@
 #!/bin/bash
 
-dir=$(dirname "$0")
-source "$dir/helpers/echo-utils.sh"
-source "$dir/helpers/define-dest.sh"
+# Script for managing AWS S3 object removals
 
-##########
-## Helpers
+script_dir=$(dirname "$0")
+source "$script_dir/helpers/echo-utils.sh"
+source "$script_dir/helpers/define-dest.sh"
 
-function clean_dest() {
-  dest="${dest%/}" # remove trailing slash
-  dest="${dest//\/\//\/}" # handle // to /
-  dest="${dest/s3:\//s3:\/\/}" # handle s3:/ to s3://
+# Exit function to print a message and terminate
+exit_cancelled() {
+  echo "Cancelled and exited."
+  exit 1
 }
 
-function clean_pattern() {
-  pattern="${pattern#/}" # remove leading slash
-  pattern="${pattern//\"}" # remove double quotes
-  pattern="${pattern//\'}" # remove single quotes
+# ----------------------- Helper Functions -----------------------
+
+sanitize_destination() {
+  dest="${dest%/}"
+  dest="${dest//\/\//\/}"
+  dest="${dest/s3:\//s3:\/\/}"
 }
 
-function echo_dest_pattern() {
-  local warn="$1"
-  clear
+sanitize_pattern() {
+  pattern="${pattern#/}"
+  pattern="${pattern//\"}"
+  pattern="${pattern//\'}"
+}
 
-  # Warn if needed
-  if [[ -n "$warn" ]]; then
-    echo_warn "$warn"
-    echo
-  fi
-
-  # Echo destination
+# Display destination with optional warning
+echo_destination() {
+  local warning="$1"
+  [[ -n "$warning" ]] && echo_warn "$warning" && echo
   echo_header "Destination:"
   echo -e "$dest/${cmagenta}${pattern}${cend}"
 }
 
-##########
-## Interactions
+# ----------------------- User Interaction -----------------------
 
-# Selects the type of remove intended
-function select_cmd_type() {
-  local txt_rm_file="Single File: Remove Specific Object"
-  local txt_rm_pattern="Prefix Pattern: Remove Objects by Pattern"
-  local txt_rm_prefix="Prefix Sweep: Remove Objects (Including Prefixes)"
-
+# User-defined removal type selection
+choose_removal_type() {
   clear
   echo_header "Command Type:"
-  while true; do
-    echo "1) $txt_rm_file"
-    echo "2) $txt_rm_pattern"
-    echo "3) $txt_rm_prefix"
-    read -p "Choose (1-4): " REPLY
-
+  PS3="Choose (1-3): "
+  options=("Single File" "Prefix Pattern" "Prefix Sweep")
+  select opt in "${options[@]}"; do
     case $REPLY in
-      1) cmd_type="file"; break ;;
-      2) cmd_type="pattern"; break ;;
-      3) cmd_type="prefix"; break ;;
-      *) echo "Invalid option. Please choose again." ;;
+      1) removal_type="file"; break ;;
+      2) removal_type="pattern"; break ;;
+      3) removal_type="prefix"; break ;;
+      *) echo "Invalid option."; exit_cancelled ;;
     esac
   done
 }
 
-# Prompt to set the recursive option
-function prompt_recursive() {
-  clear
+# Recursive removal prompt
+ask_for_recursive_removal() {
   echo_header "Recursive?"
-
-  while true; do
-    read -p "Remove recursively? (y/N): " input
-    case $input in
-      [yY]* )
-        is_recursive="true"
-        break ;;
-      [nN]* | "" )
-        is_recursive="false"
-        break ;;
-      * )
-        echo "Invalid input. (yY, nN, Enter)"
-        ;;
-    esac
-  done
+  read -p "Remove recursively? (y/N): " input
+  if [[ "${input,,}" == "n" || -z "$input" ]]; then
+    exit_cancelled
+  fi
+  recursive_flag="true"
 }
 
-
-function prompt_pattern() {
-  clear
+# Get user pattern input
+get_pattern_from_user() {
   echo_header "Pattern"
-
   while true; do
-    # Show the warning message if the last iteration had an invalid pattern
-    if [[ "$invalid_pattern" == "true" ]]; then
-      echo_dest_pattern "Must be a valid pattern!"
-      invalid_pattern="false" # Reset the flag
-    fi
-
-    read -e -p "Enter pattern: " new_pattern
-
-    # No new input, but an existing pattern is present
-    if [[ -z "$new_pattern" && ! -z "$pattern" ]]; then
-      break
-    fi
-
-    # If the new pattern is not a valid pattern
-    if [[ "$new_pattern" != *[*?[]* || "$new_pattern" == */* ]]; then
-      invalid_pattern="true"
-      continue
-    else
-      pattern="$new_pattern"
-      break
-    fi
+    [[ "$pattern_invalid" == "true" ]] && echo_destination "Invalid pattern!" && pattern_invalid="false"
+    read -e -p "Enter pattern: " input_pattern
+    if [[ -z "$input_pattern" && -n "$pattern" ]]; then return; fi
+    [[ "$input_pattern" != *[*?[]* || "$input_pattern" == */* ]] && pattern_invalid="true" || pattern="$input_pattern" && return
   done
-
-  clean_pattern
 }
 
-verify_cmd() {
+# Confirm before execution
+confirm_execution() {
   echo_header "Verify"
-  echo -e "${cred}${aws_cmd}${cend}"
-
-  if [[ $is_recursive == "true" ]]; then
-    echo_error "THIS IS A RECURSIVE OPERATION"
-  fi
-
-  read -p "Approve command? (Y/n): " confirm
-
-  if [[ "$confirm" != [yY] ]]; then
-    exit 1
+  echo -e "${cred}${s3_cmd}${cend}"
+  [[ $recursive_flag == "true" ]] && echo_error "RECURSIVE OPERATION"
+  read -p "Approve command? (Y/n): " approval
+  if [[ "$approval" == [nN] || -z "$approval" ]]; then
+    exit_cancelled
   fi
 }
 
-##########
-## Functions
+# ----------------------- AWS Command Execution -----------------------
 
-function exec_cmd() {
-  clear
-  verify_cmd
-
-  # Complete a dry run
-  clear
-  echo_header "Simulating run..." "$cblue"
-  eval "$aws_cmd --dryrun"
-
-  # Final confirmation
-  echo_header "Remove?"
-  echo -e "${cred}${aws_cmd}${cend}"
-  read -p "Ready to proceed? (y/n): " confirm
-
-  if [[ "$confirm" == [yY] ]]; then
-    eval "$aws_cmd"
-    echo; echo_success "Completed removals!"
+execute_s3_command() {
+  confirm_execution
+  echo_header "Simulating run..."
+  eval "$s3_cmd --dryrun"
+  echo_header "Confirm Removal?"
+  read -p "Ready to proceed? (y/n): " proceed_confirmation
+  if [[ "$proceed_confirmation" != [yY] ]]; then
+    exit_cancelled
   fi
+  eval "$s3_cmd"
+  echo_success "Removal complete!"
 }
 
-# Remove for a single object
-function proceed_rm_single() {
+construct_pattern_cmd() {
+  s3_cmd="aws s3 ls"
+  [[ $recursive_flag == "true" ]] && s3_cmd+=" --recursive"
+  s3_cmd+=" $dest/ | grep '.$pattern$' | awk '{print \$4}' | xargs -I {} aws s3 rm $dest/{}"
+}
+
+construct_prefix_cmd() {
+  s3_cmd="aws s3 rm"
+  [[ $recursive_flag == "true" ]] && s3_cmd+=" --recursive"
+  s3_cmd+=" $dest/"
+}
+
+# ----------------------- Main Execution -----------------------
+
+remove_single_object() {
   define_dest
-
-  if [[ "$dest" == */ ]]; then
-    echo "Destination ends in a slash but should be a file!"
-    exit 1
-  fi
-
-  aws_cmd="aws s3 rm $dest"
-  exec_cmd
+  [[ "$dest" == */ ]] && echo "Destination should point to a file!" && exit 1
+  s3_cmd="aws s3 rm $dest"
+  execute_s3_command
 }
 
-function build_pattern_cmd() {
-  aws_cmd="aws s3 ls"
-  if [[ $is_recursive == "true" ]]; then
-    aws_cmd+=" --recursive"
-  fi
-
-  aws_cmd+=" $dest/ | grep '.$pattern$' | awk '{print \$4}' | xargs -I {} aws s3 rm $dest/{}"
-}
-
-function build_prefix_cmd() {
-  aws_cmd="aws s3 rm"
-  if [[ $is_recursive == "true" ]]; then
-    aws_cmd+=" --recursive"
-  fi
-
-  aws_cmd+=" $dest/"
-}
-
-# Remove for multiple objects
-function proceed_rm_many() {
-  echo "#1 proceed_md_many: $dest"
-
-  # Define the destination
+remove_multiple_objects() {
   define_dest
-  clean_dest
-
-  echo "#2 proceed_md_many: $dest"
-
-  # Enter pattern
-  if [[ $cmd_type == "pattern" ]]; then
-    prompt_pattern
-  fi
-
-  # Recursive choice
-  prompt_recursive
-
-  case "$cmd_type" in
-    pattern)
-      build_pattern_cmd
-      exec_cmd
-      ;;
-    prefix)
-      build_prefix_cmd
-      exec_cmd
-      ;;
-    *)
-      echo "Invalid command type: $cmd_type" ;;
+  sanitize_destination
+  [[ $removal_type == "pattern" ]] && get_pattern_from_user
+  ask_for_recursive_removal
+  case "$removal_type" in
+    pattern) construct_pattern_cmd ;;
+    prefix) construct_prefix_cmd ;;
+    *) echo "Invalid removal type: $removal_type" ;;
   esac
+  execute_s3_command
 }
 
-##########
-## Main
-
-select_cmd_type
-if [[ $cmd_type == "file" ]]; then
-  proceed_rm_single
-else
-  proceed_rm_many
-fi
+# Script entry point
+choose_removal_type
+[[ $removal_type == "file" ]] && remove_single_object || remove_multiple_objects
