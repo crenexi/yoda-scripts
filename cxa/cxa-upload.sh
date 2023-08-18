@@ -39,5 +39,5 @@ function exec_confirm() {
 
 define_src
 define_dest "$src"
-exec_prerun
-exec_confirm
+# exec_prerun
+# exec_confirm
