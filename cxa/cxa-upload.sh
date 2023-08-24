@@ -1,35 +1,82 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
-source "$dir/helpers/echo-utils.sh"
+source "$dir/../cxx/helpers/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 source "$dir/helpers/define-src.sh"
+
+# Exit function to print a message and terminate
+exit_script() {
+  echo "Cancelled and exited."
+  exit 1
+}
 
 ##########
 ## Functions
 
-# Prepare the aws s3 command and do dry run
-function exec_prerun() {
-  # Command to run
-  aws_cmd="aws s3 cp \"$src\" \"$dest\""
+# Prompt the user to confirm the inputs
+function confirm_defs() {
+  # Ensures ending slash for prefix
+  [[ "$dest" != */ ]] && dest="$dest/"
 
-  # Add recursive if src is a directory
-  if [ -d "$sel_src" ]; then
-    aws_cmd+=" --recursive"
+  clear
+  echo_header "Review cp arguments:"
+  echo -e "Src: ${cyellow}${src}${cend}"
+  echo -e "Dest: ${cyellow}${dest}${cend}"
+
+  read -p "Looks good? (Y/n): " confirm
+  if [[ "$confirm" != "" && "$confirm" != [yY] ]]; then
+    exit_script
+  fi
+}
+
+function exec_cp() {
+  local opts=""
+  local items=($src)
+
+  # Add dry run if so
+  if [[ $is_dry_run == "true" ]]; then
+    opts+=" --dryrun"
   fi
 
+  # Perform cp for each src
+  for item in "${items[@]}"; do
+    local item_opts="$opts"
+    local item_dest="$dest"
+
+    # Add recursive if item is a directory
+    if [ -d "$item" ]; then
+      item_opts+=" --recursive"
+
+      # Append directory name to destination
+      local dir_name=$(basename "$item")
+      item_dest="${dest}${dir_name}/"
+    fi
+
+    aws s3 cp $item "$item_dest" $item_opts
+  done
+}
+
+# Start dry run
+function prerun_exec() {
+  clear
+  echo_header "Destination:"
+  echo -e "${cyellow}${dest}${cend}"
+
+  # Dry run
   echo_header "Simulating run..." "$cblue"
-  eval "$aws_cmd --dryrun"
+  is_dry_run="true"
+  exec_cp
 }
 
 # Prompt the user to confirm before executing the command
-function exec_confirm() {
-  echo "Review command to be executed:"
-  echo_header "$aws_cmd" "$cyellow"
-  read -p "Ready to proceed? (y/n): " confirm
-
+function confirm_exec() {
+  echo -e "${cred}Confirm to continue:${cend}"
+  read -p "Execute uploads? (y/n): " confirm
   if [[ "$confirm" == [yY] ]]; then
-    eval "$aws_cmd"
+    is_dry_run="false"
+    exec_cp
+
     echo; echo_success "Completed upload!"
   fi
 }
@@ -39,5 +86,6 @@ function exec_confirm() {
 
 define_src
 define_dest "$src"
-# exec_prerun
-# exec_confirm
+confirm_defs
+prerun_exec
+confirm_exec

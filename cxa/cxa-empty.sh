@@ -3,7 +3,7 @@
 # Script for managing AWS S3 object removals
 
 script_dir=$(dirname "$0")
-source "$script_dir/helpers/echo-utils.sh"
+source "$script_dir/../cxx/helpers/echo-utils.sh"
 source "$script_dir/helpers/define-dest.sh"
 
 # Exit function to print a message and terminate

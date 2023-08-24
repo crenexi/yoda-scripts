@@ -15,39 +15,23 @@ function init_endpoints() {
 
 function set_path() {
   path="$1"
-  echo "FIRST"
-  echo "$path"
 
   # If path is ".", "*", or ends with "/*", set to an empty string
   if [[ "$path" == "." || "$path" == "*" || "${path: -2}" == "/*" ]]; then
-      path=""
+    path=""
   fi
-  echo "ORS"
-  echo "$path"
 
-  # Remove a leading "/" if present
+  # Remove leading and trailing "/" if present
   [[ "${path:0:1}" == "/" ]] && path="${path:1}"
-  echo "leading /"
-  echo "$path"
-
-  # Remove a trailing "/" if present
   [[ "${path: -1}" == "/" ]] && path="${path:0:${#path}-1}"
-  echo "trailing /"
-  echo "$path"
 
-  # If path starts with "./", remove it
+  # Remove leading "./" or trailing "*"
   [[ "${path:0:2}" == "./" ]] && path="${path:2}"
-  echo "leading ./"
-  echo "$path"
-
-  # If path ends with "*", remove it
   [[ "${path: -1}" == "*" ]] && path="${path:0:${#path}-1}"
-  echo "trailing *"
-  echo "$path"
 }
 
 function echo_dest() {
-  # clear
+  clear
   echo_header "Destination:"
   echo -e "$base_uri/${cmagenta}${path}${cend}"
 }
@@ -56,7 +40,7 @@ function echo_dest() {
 ## Functions
 
 function read_endpoint() {
-  # clear
+  clear
   echo_header "Select S3 destination:"
 
   # Print the options vertically
