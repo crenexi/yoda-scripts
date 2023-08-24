@@ -3,27 +3,29 @@
 dir=$(dirname "$0")
 source "$dir/helpers/echo-utils.sh"
 
-##########
-## Helpers
+## Helpers ####################################################################
 
 function init_endpoints() {
   endpoints=()
   while IFS= read -r line; do
     endpoints+=("$line")
-  done < "$dir/s3-endpoints"
+  done < "$dir/s3-endpoints.txt"
+}
+
+function trim_trailing_slash() {
+  [[ "${1: -1}" == "/" ]] && echo "${1:0:${#1}-1}" || echo "$1"
 }
 
 function set_path() {
   path="$1"
 
   # If path is ".", "*", or ends with "/*", set to an empty string
-  if [[ "$path" == "." || "$path" == "*" || "${path: -2}" == "/*" ]]; then
+  if [[ "$path" == "." || "$path" == "*" || "$path" == "/" || "${path: -2}" == "/*" ]]; then
     path=""
   fi
 
-  # Remove leading and trailing "/" if present
+  # Remove leading "/" if present
   [[ "${path:0:1}" == "/" ]] && path="${path:1}"
-  [[ "${path: -1}" == "/" ]] && path="${path:0:${#path}-1}"
 
   # Remove leading "./" or trailing "*"
   [[ "${path:0:2}" == "./" ]] && path="${path:2}"
@@ -31,17 +33,13 @@ function set_path() {
 }
 
 function echo_dest() {
-  clear
-  echo_header "Destination:"
-  echo -e "$base_uri/${cmagenta}${path}${cend}"
+  echo_callout "Destination:" "$base_uri/${cmagenta}${path}${cend}"
 }
 
-##########
-## Functions
+## Functions ##################################################################
 
 function read_endpoint() {
-  clear
-  echo_header "Select S3 destination:"
+  echo_header "S3 DESTINATION" "clear"
 
   # Print the options vertically
   for i in "${!endpoints[@]}"; do
@@ -53,8 +51,8 @@ function read_endpoint() {
     read -p "Enter your choice (1-${#endpoints[@]}): " choice
 
     if ((choice >= 1 && choice <= ${#endpoints[@]})); then
-      # Set the selected endpoint
-      endpoint=${endpoints[$((choice-1))]}
+      # Set the selected endpoint and trim the trailing slash
+      endpoint=$(trim_trailing_slash "${endpoints[$((choice-1))]}")
       break
     else
       echo "Invalid choice, please try again."
@@ -65,8 +63,6 @@ function read_endpoint() {
 function edit_insert_between() {
   echo_info "INSERT BETWEEN"
   read -e -p "Insert: " input
-  input=$(echo "$input" | sed -e 's/^[\/ ]*//' -e 's/[\/ ]*$//') # trim
-
   new_path="${input}/${path}"
   set_path "$new_path"
 }
@@ -74,8 +70,6 @@ function edit_insert_between() {
 function edit_insert_new() {
   echo_info "REDWRITE PATH"
   read -e -p "New path: " input
-  input=$(echo "$input" | sed -e 's/^[\/ ]*//' -e 's/[\/ ]*$//') # trim
-
   new_path="$input"
   set_path "$new_path"
 }
@@ -85,7 +79,6 @@ function select_edit_path() {
   txt_insert="Insert between base/path"
   txt_redo="Insert new path"
 
-  echo_header "Edit path (1-3):"
   while true; do
     echo "1) $txt_accept (DEFAULT)"
     echo "2) $txt_insert"
@@ -109,6 +102,8 @@ function read_dest() {
 
   while true; do
     dest="$base_uri/$path"
+
+    echo_header "EDIT PATH" "clear"
     echo_dest
     select_edit_path
 
@@ -118,8 +113,7 @@ function read_dest() {
   done
 }
 
-##########
-## Main
+## Main #######################################################################
 
 function define_dest() {
   src="$1"

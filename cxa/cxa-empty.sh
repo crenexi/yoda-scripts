@@ -2,9 +2,10 @@
 
 # Script for managing AWS S3 object removals
 
-script_dir=$(dirname "$0")
-source "$script_dir/../cxx/helpers/echo-utils.sh"
-source "$script_dir/helpers/define-dest.sh"
+dir=$(dirname "$0")
+source "$dir/../cxx/helpers/splash.sh"
+source "$dir/../cxx/helpers/echo-utils.sh"
+source "$dir/helpers/define-dest.sh"
 
 # Exit function to print a message and terminate
 exit_cancelled() {
@@ -12,7 +13,7 @@ exit_cancelled() {
   exit 1
 }
 
-# ----------------------- Helper Functions -----------------------
+## Helper Functions ###########################################################
 
 sanitize_destination() {
   dest="${dest%/}"
@@ -30,17 +31,15 @@ sanitize_pattern() {
 echo_destination() {
   local warning="$1"
   [[ -n "$warning" ]] && echo_warn "$warning" && echo
-  echo_header "Destination:"
+  echo_info "Destination:"
   echo -e "$dest/${cmagenta}${pattern}${cend}"
 }
 
-# ----------------------- User Interaction -----------------------
+## User Interaction ###########################################################
 
 # User-defined removal type selection
 choose_removal_type() {
-  clear
-  echo_header "Command Type:"
-  PS3="Choose (1-3): "
+  echo_header "COMMAND TYPE" "clear"
   options=("Single File" "Prefix Pattern" "Prefix Sweep")
   select opt in "${options[@]}"; do
     case $REPLY in
@@ -54,17 +53,19 @@ choose_removal_type() {
 
 # Recursive removal prompt
 ask_for_recursive_removal() {
-  echo_header "Recursive?"
+  echo_info "Recursive?"
   read -p "Remove recursively? (y/N): " input
-  if [[ "${input,,}" == "n" || -z "$input" ]]; then
-    exit_cancelled
+  if [[ "$input" == "y" || "$input" == "Y" ]]; then
+    recursive_flag="true"
+  else
+    recursive_flag="false"
   fi
-  recursive_flag="true"
 }
 
 # Get user pattern input
 get_pattern_from_user() {
-  echo_header "Pattern"
+  echo_header "PATTERN" "clear"
+  echo_callout "Destination" "$dest"
   while true; do
     [[ "$pattern_invalid" == "true" ]] && echo_destination "Invalid pattern!" && pattern_invalid="false"
     read -e -p "Enter pattern: " input_pattern
@@ -75,22 +76,22 @@ get_pattern_from_user() {
 
 # Confirm before execution
 confirm_execution() {
-  echo_header "Verify"
+  echo_header "VERIFY" "clear"
   echo -e "${cred}${s3_cmd}${cend}"
-  [[ $recursive_flag == "true" ]] && echo_error "RECURSIVE OPERATION"
+  [[ $recursive_flag == "true" ]] && echo_warn "RECURSIVE OPERATION"
   read -p "Approve command? (Y/n): " approval
   if [[ "$approval" == [nN] || -z "$approval" ]]; then
     exit_cancelled
   fi
 }
 
-# ----------------------- AWS Command Execution -----------------------
+## AWS Command Execution ######################################################
 
 execute_s3_command() {
   confirm_execution
-  echo_header "Simulating run..."
+  echo_info "Simulating run..."
   eval "$s3_cmd --dryrun"
-  echo_header "Confirm Removal?"
+  echo_error "Confirm Removal?"
   read -p "Ready to proceed? (y/n): " proceed_confirmation
   if [[ "$proceed_confirmation" != [yY] ]]; then
     exit_cancelled
@@ -111,7 +112,7 @@ construct_prefix_cmd() {
   s3_cmd+=" $dest/"
 }
 
-# ----------------------- Main Execution -----------------------
+## Main Execution #############################################################
 
 remove_single_object() {
   define_dest
@@ -134,5 +135,6 @@ remove_multiple_objects() {
 }
 
 # Script entry point
+splash
 choose_removal_type
 [[ $removal_type == "file" ]] && remove_single_object || remove_multiple_objects

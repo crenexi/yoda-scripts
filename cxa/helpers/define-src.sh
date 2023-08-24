@@ -6,23 +6,19 @@ source "$dir/helpers/echo-utils.sh"
 # Default source
 default_src="./*"
 
-##########
-## Helpers
+## Helpers ####################################################################
 
 function echo_curr_dir() {
-  echo_header "Current directory:"
+  echo "Current directory:"
   pwd
   echo
   ls -AF1 --group-directories-first .
   echo
 }
 
-
 function echo_src() {
   local warn="$1"
-  clear
-
-  # List current directory contents
+  echo_header "SOURCE" "clear"
   echo_curr_dir
 
   # Warn if needed
@@ -32,8 +28,8 @@ function echo_src() {
   fi
 
   # Echo source
-  echo_header "Source:"
-  echo_info ${cmagenta}${src}${cend}
+  echo "## Source:"
+  echo -e ${cmagenta}${src}${cend}
 }
 
 function set_src() {
@@ -45,8 +41,7 @@ function set_src() {
   src="$_src"
 }
 
-##########
-## Functions
+## Functions ##################################################################
 
 function read_src() {
   src="$default_src"
@@ -66,8 +61,7 @@ function read_src() {
   done
 }
 
-##########
-## Main
+## Main #######################################################################
 
 function define_src() {
   read_src

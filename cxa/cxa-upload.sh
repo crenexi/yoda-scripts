@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
+source "$dir/../cxx/helpers/splash.sh"
 source "$dir/../cxx/helpers/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 source "$dir/helpers/define-src.sh"
@@ -11,18 +12,13 @@ exit_script() {
   exit 1
 }
 
-##########
-## Functions
+## Functions ##################################################################
 
 # Prompt the user to confirm the inputs
 function confirm_defs() {
-  # Ensures ending slash for prefix
-  [[ "$dest" != */ ]] && dest="$dest/"
-
-  clear
-  echo_header "Review cp arguments:"
-  echo -e "Src: ${cyellow}${src}${cend}"
-  echo -e "Dest: ${cyellow}${dest}${cend}"
+  echo_header "REVIEW CP ARGS" "clear"
+  echo -e "## Src: ${cmagenta}${src}${cend}"
+  echo -e "## Dest: ${cyellow}${dest}${cend}"
 
   read -p "Looks good? (Y/n): " confirm
   if [[ "$confirm" != "" && "$confirm" != [yY] ]]; then
@@ -59,12 +55,11 @@ function exec_cp() {
 
 # Start dry run
 function prerun_exec() {
-  clear
-  echo_header "Destination:"
+  echo_header "DESTINATION" "clear"
   echo -e "${cyellow}${dest}${cend}"
 
   # Dry run
-  echo_header "Simulating run..." "$cblue"
+  echo_info "Simulating run..." "$cblue"
   is_dry_run="true"
   exec_cp
 }
@@ -81,9 +76,9 @@ function confirm_exec() {
   fi
 }
 
-##########
-## Main
+## Main #######################################################################
 
+# splash
 define_src
 define_dest "$src"
 confirm_defs

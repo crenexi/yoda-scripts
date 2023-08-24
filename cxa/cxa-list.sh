@@ -4,8 +4,7 @@ dir=$(dirname "$0")
 source "$dir/../cxx/helpers/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 
-##########
-## Functions
+## Functions ##################################################################
 
 function select_cmd_type() {
   local txt_list="Contents: List Dirs/Files"
@@ -14,8 +13,7 @@ function select_cmd_type() {
   local txt_images="Images: List Image Files"
   local txt_media="Media: List All Media"
 
-  clear
-  echo_header "Command Type:"
+  echo_header "COMMAND TYPE:" "clear"
   while true; do
     echo "1) $txt_list (DEFAULT)"
     echo "2) $txt_dirs"
@@ -40,8 +38,7 @@ function select_cmd_type() {
 
 function prompt_recursive() {
   if [[ $cmd_type != "dirs" ]]; then
-    clear
-    echo_header "Recursive?"
+    echo_header "RECURSIVE?" "clear"
 
     while true; do
       read -p "List recursively? (y/N): " input
@@ -74,27 +71,22 @@ function define_command() {
     aws_cmd+=" --recursive"
   fi
 
-  # Ensure trailing slash
-  if [[ "$dest" != */ ]]; then
-    dest="$dest/"
-  fi
-
   case $cmd_type in
     "list")
       # List all files
-      cmd_header="Dirs/Files"
+      cmd_header="DIRS/FILES"
       aws_cmd+=" --human-readable $dest"
       ;;
     "dirs")
       # List directories only
-      cmd_header="Directories Only"
+      cmd_header="DIRECTORIES ONLY"
       aws_cmd+=" --human-readable $dest | grep 'PRE' | awk '{print $2}'"
       ;;
     "size")
       local human_readable="numfmt --field=3 --to=iec-i --suffix=B --padding=7"
 
       # List files by size
-      cmd_header="Files - Size Descending"
+      cmd_header="FILES - SIZE DESCENDING"
       aws_cmd+=" $dest | sort -rhk 3 | $human_readable"
       ;;
     "images")
@@ -102,7 +94,7 @@ function define_command() {
       local image_regex="\.\("$(echo "$image_exts" | tr ' ' '|')"\)$"
 
       # List image filetypes only
-      cmd_header="Images Only"
+      cmd_header="IMAGES ONLY"
       aws_cmd+=" --human-readable $dest | grep -iE '$image_regex'"
       ;;
     "media")
@@ -113,7 +105,7 @@ function define_command() {
       local media_regex="\.\("$(echo "$media_exts" | tr ' ' '|')"\)$"
 
       # List media filetypes only
-      cmd_header="Media Only - Images, Video, Audio, Etc"
+      cmd_header="MEDIA ONLY - IMAGES, VIDEO, AUDIO, ETC"
       aws_cmd+=" --human-readable $dest | grep -iE '$media_regex'"
       ;;
     *)
@@ -124,20 +116,18 @@ function define_command() {
 
 function exec_confirm() {
   echo "Review command to be executed:"
-  echo_header "$aws_cmd" "$cyellow"
+  echo_warn "$aws_cmd"
   read -p "Ready to proceed? (Y/n): " confirm
 
   if [[ -z "$confirm" || "$confirm" == [yY] ]]; then
-    clear
-    echo_header "$cmd_header"
-    echo_info "## Location: $dest"
+    echo_header "$cmd_header" "clear"
+    echo_info "## Reading: $dest"
     eval "$aws_cmd"
-    echo; echo_success "Listing complete"
+    echo_success "Listing complete"
   fi
 }
 
-##########
-## Main
+## Main #######################################################################
 
 define_dest
 select_cmd_type

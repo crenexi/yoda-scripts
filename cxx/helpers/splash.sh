@@ -1,23 +1,31 @@
 #!/bin/bash
 
+dir_content="$HOME/.cx/bin/cxx/helpers/content"
+
 # Prints centered random quote from quotes.txt
 function echo_random_quote() {
-  quote_count=$(grep -cve '^\s*$' ./content/quotes.txt)
-  quote_line=$((RANDOM % quote_count + 1))
-  quote=$(sed "${quote_line}q;d" ./content/quotes.txt)
+  quote_count=$(grep -cve '^\s*$' $dir_content/quotes.txt)
 
-  echo "##/"
-  echo "#/  $quote"
-  echo "/"
+  if [[ $quote_count != 0 ]]; then
+    quote_line=$((RANDOM % quote_count + 1))
+    quote=$(sed "${quote_line}q;d" $dir_content/quotes.txt)
+
+    echo "##/"
+    echo "#/  $quote"
+    echo "/"
+  fi
 }
 
-# Crenexi splash
-clear
-cat './content/art_crenexi.txt'
-cat './content/art_stitch.txt'
-sleep 1
-clear
+function splash() {
 
-# Quote and ready
-echo_random_quote
-echo
+  # Crenexi splash
+  clear
+  cat "$dir_content/art_crenexi.txt"
+  cat "$dir_content/art_stitch.txt"
+  sleep 1
+  clear
+
+  # Quote and ready
+  echo_random_quote
+  echo
+}
