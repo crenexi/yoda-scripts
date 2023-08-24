@@ -78,7 +78,7 @@ function confirm_exec() {
 
 ## Main #######################################################################
 
-# splash
+splash
 define_src
 define_dest "$src"
 confirm_defs
