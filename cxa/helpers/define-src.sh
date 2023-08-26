@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
-source "$dir/helpers/echo-utils.sh"
+source "$dir/utils/echo-utils.sh"
 
 # Default source
 default_src="./*"

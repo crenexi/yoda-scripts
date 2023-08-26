@@ -1,8 +1,9 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
-source "$dir/../cxx/helpers/splash.sh"
-source "$dir/../cxx/helpers/echo-utils.sh"
+echo "$dir"
+source "$dir/../utils/splash.sh"
+source "$dir/../utils/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 source "$dir/helpers/define-src.sh"
 

@@ -3,8 +3,7 @@
 # Script for managing AWS S3 object removals
 
 dir=$(dirname "$0")
-source "$dir/../cxx/helpers/splash.sh"
-source "$dir/../cxx/helpers/echo-utils.sh"
+source "$dir/../utils/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 
 # Exit function to print a message and terminate
@@ -135,6 +134,5 @@ remove_multiple_objects() {
 }
 
 # Script entry point
-splash
 choose_removal_type
 [[ $removal_type == "file" ]] && remove_single_object || remove_multiple_objects

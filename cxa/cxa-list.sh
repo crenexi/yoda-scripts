@@ -1,8 +1,7 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
-source "$dir/../cxx/helpers/splash.sh"
-source "$dir/../cxx/helpers/echo-utils.sh"
+source "$dir/../utils/echo-utils.sh"
 source "$dir/helpers/define-dest.sh"
 
 ## Functions ##################################################################
@@ -130,7 +129,6 @@ function exec_confirm() {
 
 ## Main #######################################################################
 
-splash
 define_dest
 select_cmd_type
 prompt_recursive

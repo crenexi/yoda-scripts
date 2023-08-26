@@ -1,0 +1,12 @@
+{
+  "component": [
+    "js-component",
+    "ts-component"
+  ],
+  "container": [
+    "js-container",
+    "js-container-params",
+    "ts-container",
+    "ts-container-params"
+  ]
+}

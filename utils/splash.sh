@@ -1,6 +1,7 @@
 #!/bin/bash
 
-dir_content="$HOME/.cx/bin/cxx/helpers/content"
+splash_duration=2
+dir_content="$HOME/.cx/bin/utils/content"
 
 # Prints centered random quote from quotes.txt
 function echo_random_quote() {
@@ -17,12 +18,11 @@ function echo_random_quote() {
 }
 
 function splash() {
-
   # Crenexi splash
   clear
   cat "$dir_content/art_crenexi.txt"
   cat "$dir_content/art_stitch.txt"
-  sleep 1
+  sleep $splash_duration
   clear
 
   # Quote and ready

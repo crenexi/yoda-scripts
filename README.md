@@ -20,31 +20,36 @@ path_from_crenexi
 ### CXG
 | **Crenexi Git** Utilities
 
-```
-cxg-release-start.sh
-cxg-release-finish.sh
+```bash
+cxg-release-start.sh # start versioned release
+cxg-release-finish.sh # finish versioned release
+cxg-sync.sh # sync origin and deleted branches
 ```
 
 ### CXR
 | **Crenexi React** Utilities
 
-```
-cxr-component [dest] [name]
-cxr-container [dest] [name]
+```bash
+# TODO: BUILD THIS CONCEPT
+# cxr-component [dest] [name]
+# cxr-container [dest] [name]
 ```
 
 ### CXA
 | **Crenexi Assets** Utilities
 
-```
-cxa-upload
+```bash
+cxa-list.sh # options to list bucket
+cxa-upload # options to upload to bucket
+cxa-empty.sh # options to remove in bucket
 ```
 
 ### CXI
 | **Crenexi Image** Utilities
 
-```
+```bash
 WORK IN PROGRESS
+# TODO: BUILD THIS CONCEPT
 # cxi-ogs-to-triple.sh [dir]
 ```
 
@@ -78,7 +83,7 @@ use-vpn.sh
 ```
 
 ```bash
-mnt-pandora.sh
+mnt-pandora.sh # NAS
 ```
 
 #### BAC

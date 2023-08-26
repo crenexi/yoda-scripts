@@ -2,6 +2,7 @@
 # Installs all of these scripts at ~/.cx/bin
 
 folders=(
+  "./utils"
   "./cxa"
   "./cxg"
   "./cxi"
