@@ -5,8 +5,7 @@ function focusSpotify {
 }
 
 # check if spotify is already running
-if pgrep -x "spotify" > /dev/null
-then
+if pgrep -x "spotify" > /dev/null; then
   focusSpotify
 else
 	spotify &

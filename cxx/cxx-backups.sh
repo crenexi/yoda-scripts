@@ -1,8 +1,10 @@
 #!/bin/bash
 # Checkup on some specific cron jobs
 
+dir=$(dirname "$0")
 host=$(hostname)
 logs="$HOME/.cx/logs"
+source "$dir/../utils/echo-utils.sh"
 
 function echo_last_backups() {
   dirs=("bac-home" "bac-most" "bac-games")
@@ -11,7 +13,7 @@ function echo_last_backups() {
     filepath="$logs/bac/${dir}_time"
 
     if [ -f "$filepath" ]; then
-      echo "$dir: $(cat "$filepath")"
+      echo_info "$dir: $(cat "$filepath")"
     fi
   done
 }
@@ -28,9 +30,9 @@ function echo_last_backups_less() {
   done
 }
 
-echo "## LAST BACKUPS################################################"
+echo_header "LAST BACKUPS" "clear"
 echo_last_backups
-echo "## SEE MORE ###################################################"
+echo_header "SEE MORE"
 echo "LAST BACKUP LOG"
 echo_last_backups_less
 echo "CRENEXI BACKUP LOG"
@@ -41,4 +43,3 @@ echo "  chrontab -l"
 echo "ALL/USER CHRON SYSLOG"
 echo "  grep -E 'CRON.' /var/log/syslog | tail -n 300 | less -F"
 echo "  grep -E 'CRON.*crenexi' /var/log/syslog | tail -n 300 | less -F"
-echo

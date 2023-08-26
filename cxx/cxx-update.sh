@@ -1,64 +1,58 @@
 #!/bin/bash
 set -e
 
-# Helpers
-echo_heading() {
-  local title=$1
-  local title_length=${#title}
-  local pad_length=$((56 - title_length))
-  local pad=$(printf '%*s' "$pad_length" | tr ' ' '#')
-  echo "## $title $pad"
-}
+dir=$(dirname "$0")
+source "$dir/../utils/echo-utils.sh"
 
 # Basic update
 function start_update() {
-  echo_heading "Update"
+  echo_header "UPDATE" "clear"
   sudo apt update
 }
 
 # Prompt for upgrade
 function prompt_upgrade() {
-  echo_heading "Upgrade"
+  echo_header "UPGRADE"
   read -p "Choose upgrade option (1. Routine / 2. Aggressive / 3. Skip): " upgrade_opt
 
   if [[ $upgrade_opt == "1" ]]; then
-    echo "Starting routine upgrade..."
+    echo_info "Starting routine upgrade..."
     sudo apt upgrade
-    echo "Completed upgrade!"
+    echo_success "Completed upgrade!"
   elif [[ $upgrade_opt == "2" ]]; then
-    echo "Starting aggressive upgrade..."
+    echo_info "Starting aggressive upgrade..."
     sudo apt dist-upgrade -y
     sudo apt autoremove --purge -y
     sudo apt clean
-    echo "Completed upgrade!"
+    echo_success "Completed upgrade!"
   elif [[ $upgrade_opt == "3" ]]; then
     echo "Skipping upgrade."
   else
-    echo "Invalid option. Choose an upgrade option."
+    echo_warn "Invalid option. Choose an upgrade option."
     prompt_upgrade
   fi
 }
 
 # Prompt to update Chrome
 function prompt_chrome_update() {
-  echo_heading "Chrome"
+  echo_header "CHROME"
   read -p "Update Chrome? (y/n): " confirm_chrome
   if [[ $confirm_chrome == "y" || $confirm_chrome == "Y" ]]; then
-    echo "Updating Chrome..."
+    echo_info "Updating Chrome..."
     run-chrome-update.sh
   fi
 }
 
 # Prompt to update gnome extensions
 function prompt_ext_update() {
-  echo_heading "Extensions"
+  echo_header "EXTENSIONS"
   list_can_update=$(gnome-extensions list --updates)
 
   if ! [[ -n "$list_can_update" ]]; then
-    echo "All extensions up-to-date."
+    echo_success "All extensions up-to-date."
   else
     echo "##"
-    echo "Extension updates available:"
+    echo_info "Extension updates available:"
     echo $list_can_update
     echo "##"
     echo "gnome-extensions install <uuid> (shown above)"
@@ -69,12 +63,16 @@ function prompt_ext_update() {
 
 # Done
 function finish_update() {
-  echo "Update complete!"
-  echo_heading "Reboot"
+  echo_success "Update complete!"
+  echo_header "Reboot"
+
   read -p "Reboot the system? (y/n): " confirm_reboot
+
   if [[ $confirm_reboot == "y" || $confirm_reboot == "Y" ]]; then
-    echo "Rebooting the system..."
+    echo_info "Rebooting the system..."
     reboot
+  else
+    echo_success "Updates completed!"
   fi
 }
 

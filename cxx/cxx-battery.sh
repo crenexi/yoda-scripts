@@ -1,7 +1,10 @@
 #!/bin/bash
 
+dir=$(dirname "$0")
+source "$dir/../utils/echo-utils.sh"
+
 if ! command -v tlp-stat &> /dev/null; then
-  echo "Package 'tlp-stat' is not installed. Exiting."
+  echo_error "Package 'tlp-stat' is not installed. Exiting."
   exit 1
 fi
 

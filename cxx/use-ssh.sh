@@ -1,6 +1,9 @@
 #!/bin/bash
 
 locations=()
+
+## HELPERS ####################################################################
+
 add_location() {
   local name=$1
   local pem_path=$2
@@ -9,14 +12,14 @@ add_location() {
   locations+=("$name:$pem_path:$ssh_url")
 }
 
-## Define SSH locations #########################
-## $name $pem_path $ssh_url #####################
+## CONFIG #####################################################################
+## Define SSH locations: add_location <name> <pem-path> <ssh-url>
 
 add_location "crenexi-api" \
   "~/.ssh/ec2/ec2crenexicom.pem" \
   "ubuntu@ec2-34-201-224-176.compute-1.amazonaws.com"
 
-## Main #########################################
+## Main #######################################################################
 
 PS3="Select the location: "
 select location in "${locations[@]}"; do

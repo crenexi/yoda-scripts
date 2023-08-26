@@ -13,6 +13,7 @@ function verify() {
 
 verify "git"
 verify "htop"
+verify "trash"
 verify "cmatrix"
 verify "curl"
 verify "wmctrl"

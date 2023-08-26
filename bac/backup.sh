@@ -103,8 +103,9 @@ function info_stamped() {
 }
 
 function cancel() {
+  local exit_code=${2:-0}
   info_stamped "Cancelled" "$1"
-  exit 1
+  exit "$exit_code"
 }
 
 function configure_vars() {
@@ -200,12 +201,12 @@ function run_backup() {
   file_log_temp=$(mktemp)
 
   # Ensure destination parent and folder exist
-  if ! [ -d "$dest_parent" ]; then cancel "Destination parent does not exist!"; fi
+  if ! [ -d "$dest_parent" ]; then cancel "Destination parent does not exist!" 1; fi
   if ! [ -d "$dest" ]; then mkdir "$dest"; fi
 
   # Ensure exclude and include files exist
-  if ! [ -f $exclude_from ]; then cancel "Exclude file does not exist!"; fi
-  if ! [ -f $include_from ]; then cancel "Include file does not exist!"; fi
+  if ! [ -f $exclude_from ]; then cancel "Exclude file does not exist!" 1; fi
+  if ! [ -f $include_from ]; then cancel "Include file does not exist!" 1; fi
 
   # Backup each source
   for src in "${sources[@]}"; do
