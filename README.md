@@ -1,4 +1,16 @@
-# Install
+# Yoda Scripts
+
+![][babyYodaGif]
+
+Personal utility scripts.
+
+Resources:
+
+🛠️ **[Script Groups][urlScriptGroups]**
+
+👨‍💻 **[Bash Aliases][urlBashAliases]**
+
+# Setup
 
 Add this to `.bashrc`
 
@@ -15,111 +27,39 @@ function path_from_crenexi() {
 path_from_crenexi
 ```
 
-# Groups
+*Ensure all groups are included*
 
-### CXG
-| **Crenexi Git** Utilities
+# Footnotes
 
-```bash
-cxg-release-start.sh # start versioned release
-cxg-release-finish.sh # finish versioned release
-cxg-sync.sh # sync origin and deleted branches
-```
+## License
 
-### CXR
-| **Crenexi React** Utilities
+- MIT License
 
-```bash
-# TODO: BUILD THIS CONCEPT
-# cxr-component [dest] [name]
-# cxr-container [dest] [name]
-```
+## Authors
 
-### CXA
-| **Crenexi Assets** Utilities
+* **James Blume** - [Crenexi](https://github.com/crenexi)
 
-```bash
-cxa-list.sh # options to list bucket
-cxa-upload # options to upload to bucket
-cxa-empty.sh # options to remove in bucket
-```
+[babyYodaGif]: https://media.giphy.com/media/KziKCpvrGngHbYjaUF/giphy.gif
+[urlScriptGroups]: https://crenexi.notion.site/Script-Groups-80b79ccfc88144c3b848fc6a2a25443a
+[urlBashAliases]: https://crenexi.notion.site/Bash-Aliases-a2e9c58fc2f24b4ba482c01956e1628b
 
-### CXI
-| **Crenexi Image** Utilities
 
-```bash
-WORK IN PROGRESS
-# TODO: BUILD THIS CONCEPT
-# cxi-ogs-to-triple.sh [dir]
-```
 
-### CXX
-| **System** checks and runs
 
-```bash
-cxx-vars.sh # Basic system vars
-cxx-versions.sh # Important versions
-cxx-verify.sh # Important CLIs
-cxx-battery.sh # Laptop battery
-cxx-notify.sh # Themed taost
-```
 
-```bash
-cxx-services.sh # Services preview
-cxx-backups.sh # Peek recent backups
-cxx-cleanup.sh # General cleanup
-cxx-update.sh # Routine updates
-```
 
-```bash
-run-chrome.sh
-run-chrome-update.sh
-run-spotify.sh
-```
 
-```bash
-use-ssh.sh
-use-vpn.sh
-```
 
-```bash
-mnt-pandora.sh # NAS
-```
 
-#### BAC
 
-Backups strategy (see Notion)
 
-1. Install: `./bac/install.sh`
-2. Configure: `~/.cx/bin/bac/bac-most/` (config, excludes, includes)
-3. Execute: `bac-most.sh`; **stamp** and **log** at `~/.cx/logs/bac/`
 
-# Aliases
 
-(Latest **.bashrc** backed up in DropBox)
 
-### List
 
-- **ls** basics: `ls`, `lv`, `ll`
-- **ls** almost all: `lsa`, `lva`, `lla`
-- **dir**: `di`, `div`, `dil`
 
-### Git
 
-- Status, branches, log: `gis`, `gib`, `gil`
-- Add and commit: `gia`, `giA`, `gic`
-- Git flow: `gff`, `gfr`, `gfb`, `gfh`, `gfl`
 
-### Node
 
-- NPM start: `nps`
-- NPM build: `npb`
-- NPM lint: `npl`
 
-### Misc
 
-- Crenexi alert: `cx-info`, `cx-warn`
-- Enabled services: `sys-enabled`
-- NordVPN: `nv`, `nvs`, `nvc`, `nvd`
-- Copy/paste: `setclip` and `getclip`
-- Matrix: cmatrix
