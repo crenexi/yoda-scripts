@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 dir=$(dirname "$0")
 source "$dir/helpers/helpers.sh"
@@ -7,19 +8,29 @@ source "$dir/../utils/echo-utils.sh"
 
 ## FUNCTIONS ##################################################################
 
-function preflight_checks {
+function preflight_checks() {
+  echo "Preflight checks..."
   check_git_flow
   check_unstaged_commits
   check_npm_lint
   read_version
 
-  clear; echo_success "Ready to start release"
+  echo_success "Ready to start release"
   echo -e "Current Version: ${cmagenta}v${version}${cend}"
 }
 
-function prompt_version {
-  read -p "Enter new semantic version (exclude the v): " new_version
-  validate_version
+function prompt_version() {
+  # Enter valid version
+  while true; do
+    read -p "Enter new semantic version (exclude the v): " new_version
+
+    # Invalid version
+    if [[ ! "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      echo_error "Invalid version. Must be in '0.0.0' format!"
+    else
+      break
+    fi
+  done
 
   # Confirmation to proceed
   while true; do
@@ -33,7 +44,7 @@ function prompt_version {
   done
 }
 
-function start_flow_release {
+function start_flow_release() {
   echo "Starting release..."
   git checkout develop
   git pull origin develop
@@ -41,7 +52,7 @@ function start_flow_release {
   git flow release start v${new_version}
 }
 
-function bump_packagejson {
+function bump_packagejson() {
   echo "Bumping version..."
 	npm version "$new_version" --no-git-tag-version
   git add .

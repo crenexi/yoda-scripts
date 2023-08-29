@@ -15,7 +15,7 @@ function cancel() {
 }
 
 # Validate Git Flow
-function check_git_flow {
+function check_git_flow() {
   # Check installation
   if ! git flow version > /dev/null 2>&1; then
     cancel 1 "Git Flow is not installed. Install it before proceeding."
@@ -28,7 +28,7 @@ function check_git_flow {
 }
 
 # Check for unstaged commits
-function check_unstaged_commits {
+function check_unstaged_commits() {
   # Exit if not a Git repo
   if [ ! -d ".git" ]; then
     cancel 1 "This directory is not a Git repository. EXITING."
@@ -44,7 +44,12 @@ function check_unstaged_commits {
 }
 
 # Linting validation
-function check_npm_lint {
+function check_npm_lint() {
+  if ! grep -q '"lint":' package.json; then
+    echo "Skipping lint. No such command in package."
+    return 0
+  fi
+
   npm run lint > /dev/null 2>&1
 
   # Has lint output
@@ -55,7 +60,7 @@ function check_npm_lint {
       read -p "Proceed regardless? (y/n) " input
       case "$input" in
         [Yy]* ) break;;
-        [Nn]* ) cancel 0
+        [Nn]* ) cancel 0;;
         * ) echo "Yes or no.";;
       esac
     done
@@ -63,7 +68,7 @@ function check_npm_lint {
 }
 
 # Retrieve the version
-function read_version {
+function read_version() {
   version=$(cat package.json \
     | grep version \
     | head -1 \
@@ -73,7 +78,7 @@ function read_version {
 }
 
 # Validate semantic version
-function validate_version {
+function validate_version() {
   if [[ ! "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     cancel 1 "Invalid semantic version."
   fi
