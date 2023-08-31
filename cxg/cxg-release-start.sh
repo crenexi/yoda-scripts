@@ -46,10 +46,15 @@ function prompt_version() {
 
 function start_flow_release() {
   echo "Starting release..."
+
+  # Sync develop
   git checkout develop
   git pull origin develop
-  git push origin develop
-  git flow release start v${new_version}
+
+  # Create release
+  git branch -D release
+  git checkout -b release
+  git push -f origin release
 }
 
 function bump_packagejson() {

@@ -75,4 +75,14 @@ function read_version() {
     | awk -F: '{ print $2 }' \
     | sed 's/[",]//g' \
     | tr -d '[[:space:]]')
+
+  # Check version exists
+  if [[ -z "${version}" ]]; then
+    cancel 1 "Version is not defined."
+  fi
+
+  # Check version format
+  if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    cancel 1 "Version ${version} is not in the format X.Y.Z"
+  fi
 }

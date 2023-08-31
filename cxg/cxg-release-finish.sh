@@ -31,39 +31,43 @@ function confirm_release {
   done
 }
 
-function update_origin {
-  echo "Updating origin..."
-
-  # Update main
-  git checkout main
-  git push origin main
-  git push origin main --tags
-
-  # Update develop
-  git checkout develop
-  git push origin develop
-  git push origin develop --tags
-
-  echo_info "Origin updated!"
-}
-
 function finish_release {
   echo_info "Finishing release..."
 
-  # Finishes the release and tags
-  export GIT_MERGE_AUTOEDIT=no
-  git flow release finish -m 'Merge' v${version}
-  unset GIT_MERGE_AUTOEDIT
+  # Sync release
+  git checkout release
+  git pull origin release
+
+  # release->main
+  git checkout main
+  git merge release
+
+  # Tag release
+  git tag -a "v${version}" -m "Release version ${version}"
+
+  # Sync main
+  git push origin main
+  git push origin main --tags
   echo_success "RELEASED v${version} AND PUSHED TAGS!"
 
+  # Backmerge into develop
+  git checkout develop
+  git merge release
+
+  # Sync develop
+  git push origin develop
+  git push origin develop --tags
+
+  # Remove release
+  git branch -d release
+  git push origin --delete release
+
   # Push changes
-  update_origin
-  echo_success "RELEASE PUSHED TO ORIGIN"
+  echo_success "✨ FINISHED RELEASE!"
 
   # List branches
   echo "Local branches:"
   git branch --list
-
 }
 
 ## MAIN #######################################################################
