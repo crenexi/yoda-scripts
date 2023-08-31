@@ -76,10 +76,3 @@ function read_version() {
     | sed 's/[",]//g' \
     | tr -d '[[:space:]]')
 }
-
-# Validate semantic version
-function validate_version() {
-  if [[ ! "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    cancel 1 "Invalid semantic version."
-  fi
-}
