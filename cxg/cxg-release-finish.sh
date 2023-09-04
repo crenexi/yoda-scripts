@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 dir=$(dirname "$0")
 source "$dir/helpers/helpers.sh"

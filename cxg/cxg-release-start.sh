@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 dir=$(dirname "$0")
 source "$dir/helpers/helpers.sh"
@@ -44,20 +43,34 @@ function prompt_version() {
   done
 }
 
-function create_release_branch {
-  local local_exists=$(git show-ref refs/heads/release)
-  local remote_exists=$(git ls-remote origin refs/heads/release)
+function check_release_commits() {
+  git fetch origin develop release # fetch latest
+  local develop_commit=$(git rev-parse origin/develop) # develop hash
+  local release_commit=$(git rev-parse origin/release) # release hash
 
-  # Delete local release
-  if [[ -n "${local_exists}" ]]; then
-    git branch -D release
+  # Compare the latest commits
+  if [[ "${develop_commit}" != "${release_commit}" ]]; then
+    cancel 1 "Release branch exists with new commits!"
+  fi
+}
+
+function create_release_branch() {
+  # Check if a local 'release' branch exists
+  local local_exists=$(git show-ref --quiet --verify refs/heads/release && echo "exists" || echo "notexists")
+
+  # Check if a remote 'release' branch exists
+  local remote_exists=$(git ls-remote --exit-code --heads origin release > /dev/null 2>&1 && echo "exists" || echo "notexists")
+
+  # If either local or remote 'release' branch exists
+  if [[ "${local_exists}" == "exists" || "${remote_exists}" == "exists" ]]; then
+    check_release_commits
   fi
 
   # Create new local release
   git checkout -b release
 
   # Force push to remote
-  if [[ -n "${remote_exists}" ]]; then
+  if [[ "${remote_exists}" == "exists" ]]; then
     git push -f origin release
   else
     git push origin release
