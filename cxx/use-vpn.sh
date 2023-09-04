@@ -1,52 +1,66 @@
-openvpn_dir="/etc/openvpn/ovpn_udp/"
-server=${1:-"us5695"}
-proto=${2:-"udp"}
-
-credentials="$HOME/.nordvpn-config"
+#!/bin/bash
 
 dir=$(dirname "$0")
 source "$dir/../utils/echo-utils.sh"
 
+## CONFIG #####################################################################
+
+credentials="$HOME/.nordvpn-config"
+openvpn_dir="/etc/openvpn/ovpn_udp/"
+server=${1:-"us9680"}
+proto=${2:-"udp"}
+
 ## HELPERS ####################################################################
 
-# Check if the credentials file exists
-function check_credentials_dne() {
-  if [[ ! -f $credentials ]]; then
-    echo "NordVPN config file not found."
-    exit 1
-  fi
+# Exit script
+function error() {
+  message=${1:-"Unknown error."}
+  echo_error "$message"
+  exit 1
 }
 
-# Read username and password, and verify
-function verify_credentials() {
-  read -r username < "$credentials"
-  read -r password < "$credentials"
+## FUNCTIONS ##################################################################
 
-  # Check if the username or password is empty
+function verify_credentials() {
+  # Ensure file exists
+  if [[ ! -f $credentials ]]; then
+    error "NordVPN config file not found."
+    echo "Create file at \'\$HOME/.nordvpn-config\'"
+  fi
+
+  # Get and verify credentials
+  username=$(grep -oP 'username=\K.*' "$credentials")
+  password=$(grep -oP 'password=\K.*' "$credentials")
   if [[ -z $username ]] || [[ -z $password ]]; then
-    echo "NordVPN username or password is missing."
-    exit 1
+    error "NordVPN username or password is missing."
   fi
 }
 
 # Temp file to store credentials
 function store_credentials() {
   credentials_temp_file=$(mktemp)
-  chmod 200 "$credentials_temp_file"
+  chmod 600 "$credentials_temp_file"
   printf "%s\n%s" "$username" "$password" > "$credentials_temp_file"
 }
 
+# Start the VPN
 function open_vpn() {
-  sudo openvpn --config "$openvpn_dir$server.nordvpn.com.$proto.ovpn" --auth-user-pass "$credentials_temp_file"
+  config_file="$openvpn_dir$server.nordvpn.com.$proto.ovpn"
 
-  # Clean up the temporary file
-  rm "$credentials_temp_file"
-  exit 0
+  if [[ ! -f $config_file ]]; then
+    error "Config file $config_file not found."
+  fi
+
+  sudo openvpn --config "$config_file" --auth-user-pass "$credentials_temp_file" || {
+    error "Failed to connect."
+  }
 }
 
 ## MAIN #######################################################################
 
-check_credentials_dne
+# Cleanup in case of an error
+trap '[[ -n $credentials_temp_file ]] && rm -f "$credentials_temp_file"' EXIT
+
 verify_credentials
 store_credentials
 open_vpn
