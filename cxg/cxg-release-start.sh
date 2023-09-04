@@ -44,7 +44,27 @@ function prompt_version() {
   done
 }
 
-function start_flow_release() {
+function create_release_branch {
+  local local_exists=$(git show-ref refs/heads/release)
+  local remote_exists=$(git ls-remote origin refs/heads/release)
+
+  # Delete local release
+  if [[ -n "${local_exists}" ]]; then
+    git branch -D release
+  fi
+
+  # Create new local release
+  git checkout -b release
+
+  # Force push to remote
+  if [[ -n "${remote_exists}" ]]; then
+    git push -f origin release
+  else
+    git push origin release
+  fi
+}
+
+function start_release() {
   echo "Starting release..."
 
   # Sync develop
@@ -52,9 +72,7 @@ function start_flow_release() {
   git pull origin develop
 
   # Create release
-  git branch -D release
-  git checkout -b release
-  git push -f origin release
+  create_release_branch
 }
 
 function bump_packagejson() {
@@ -70,5 +88,5 @@ function bump_packagejson() {
 splash
 preflight_checks
 prompt_version
-start_flow_release
+start_release
 bump_packagejson
