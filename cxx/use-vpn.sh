@@ -10,7 +10,7 @@ openvpn_dir="/etc/openvpn/ovpn_udp/"
 server=${1:-"us9680"}
 proto=${2:-"udp"}
 
-## HELPERS ####################################################################
+## FUNCTIONS ##################################################################
 
 # Exit script
 function error() {
@@ -18,8 +18,6 @@ function error() {
   echo_error "$message"
   exit 1
 }
-
-## FUNCTIONS ##################################################################
 
 function verify_credentials() {
   # Ensure file exists

@@ -1,40 +1,100 @@
 #!/bin/bash
 
-locations=()
+dir=$(dirname "$0")
+source "$dir/../utils/splash.sh"
+source "$dir/../utils/echo-utils.sh"
 
-## HELPERS ####################################################################
+ssh_locations_file="$dir/config/ssh-locations.json"
 
-add_location() {
-  local name=$1
-  local pem_path=$2
-  local ssh_url=$3
+## FUNCTIONS ##################################################################
 
-  locations+=("$name:$pem_path:$ssh_url")
+# Exit script
+function error() {
+  message=${1:-"Unknown error."}
+  echo_error "$message"
+  exit 1
 }
 
-## CONFIG #####################################################################
-## Define SSH locations: add_location <name> <pem-path> <ssh-url>
+# Validate JSON locations
+function validate_locations_json() {
+  # Ensure file exists
+  if [[ ! -f $ssh_locations_file ]]; then
+    error "SSH locations JSON file not found."
+  fi
 
-add_location "crenexi-api" \
-  "~/.ssh/ec2/ec2crenexicom.pem" \
-  "ubuntu@ec2-34-201-224-176.compute-1.amazonaws.com"
+  # Ensure it's parseable
+  if ! jq empty "$ssh_locations_file" >/dev/null 2>&1; then
+    error "Invalid JSON file format."
+  fi
+}
 
-## Main #######################################################################
+function read_locations() {
+  validate_locations_json
+  IFS=$'\n' read -rd '' -a ssh_locations < <(jq -r 'map(.name + ":" + .pem_path + ":" + .ssh_url) | .[]' "$ssh_locations_file")
+}
 
-PS3="Select the location: "
-select location in "${locations[@]}"; do
-  case $location in
-    *)
-      # Split the location location using ':' as the delimiter
-      IFS=':' read -r -a location <<< "$location"
+function validate_pem_path() {
+  if [[ ! -f $1 ]]; then
+    error "PEM file $1 not found."
+  fi
+}
 
-      # Retrieve the specific location from the array
-      name=${location[0]}
-      pem_path=${location[1]}
-      ssh_url=${location[2]}
+function echo_locations() {
+  locations_count=1
+  echo "#/"
 
-      # SSH into the selected location
-      ssh -i "$pem_path" "$ssh_url"
-      break;;
-  esac
-done
+  for location in "${ssh_locations[@]}"; do
+    IFS=':' read -r -a location_arr <<< "$location"
+    name=${location_arr[0]}
+    pem_path=${location_arr[1]}
+    ssh_url=${location_arr[2]}
+
+    echo "$locations_count) $name"
+    echo "## SSH: $ssh_url"
+    echo "## PEM: $pem_path"
+    echo "#/"
+
+    ((locations_count++))
+  done
+
+  # Range of locations like "1-3"
+  locations_range="1-$((locations_count - 1))"
+  [[ $locations_count -eq 2 ]] && locations_range="1"
+}
+
+function open_ssh_session() {
+  echo_header "SSH" "clear"
+  echo_callout "Location:" "$name"
+
+  ssh_cmd="ssh -i \"$pem_path\" \"$ssh_url\""
+  gnome-terminal -- bash -c "$ssh_cmd; exec bash"
+}
+
+function prompt_location() {
+  while true; do
+    clear
+    echo_header "SSH TO"
+    echo_locations
+
+    read -p "Enter your choice [$locations_range]: " input
+
+    # Validate choice
+    if [[ $input -ge 1 && $input -lt $locations_count ]]; then
+      location=${ssh_locations[$((input-1))]}
+      IFS=':' read -r -a location_arr <<< "$location"
+
+      name=${location_arr[0]}
+      pem_path=${location_arr[1]}
+      ssh_url=${location_arr[2]}
+
+      validate_pem_path "$pem_path"
+      open_ssh_session
+      break
+    fi
+  done
+}
+
+## MAIN #######################################################################
+
+read_locations
+prompt_location
