@@ -75,3 +75,4 @@ splash
 preflight_checks
 confirm_release
 finish_release
+prompt_notion

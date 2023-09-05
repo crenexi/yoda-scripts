@@ -103,3 +103,4 @@ preflight_checks
 prompt_version
 start_release
 bump_packagejson
+prompt_notion

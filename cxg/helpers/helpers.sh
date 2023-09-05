@@ -1,5 +1,7 @@
 #!/bin/bash
 
+url_notion_projects="https://www.notion.so/crenexi/9e7a6fc2be4b42499e5141ae44c250a0"
+
 # Exit script
 function cancel() {
   code=${1:-1}
@@ -85,4 +87,10 @@ function read_version() {
   if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     cancel 1 "Version ${version} is not in the format X.Y.Z"
   fi
+}
+
+# Prompt to update Notion
+function prompt_notion() {
+  echo_callout "Update Notion" "$url_notion_projects"
+  read -p "Update Notion version. Done: (ENTER): "
 }
