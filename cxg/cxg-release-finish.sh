@@ -19,6 +19,12 @@ function preflight_checks {
   echo_warn "YOU'RE ABOUT TO RELEASE v${version}"
 }
 
+# Prompt to perform invalidation
+function prompt_invalidation() {
+  echo_callout "Invalidation" "$url_notion_projects"
+  read -p "Consider CloudFront invalidation for immediate updates. Done: (ENTER): "
+}
+
 function confirm_release {
   while true; do
     read -p "Proceed to release? [y/n] " yn
@@ -76,3 +82,4 @@ preflight_checks
 confirm_release
 finish_release
 prompt_notion
+prompt_invalidation
