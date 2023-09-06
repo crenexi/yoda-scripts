@@ -67,7 +67,7 @@ function open_ssh_session() {
   echo_callout "Location:" "$name"
 
   ssh_cmd="ssh -i \"$pem_path\" \"$ssh_url\""
-  gnome-terminal -- bash -c "$ssh_cmd; exec bash"
+  gnome-terminal -- bash -c "$ssh_cmd; exec bash" &
 }
 
 function prompt_location() {

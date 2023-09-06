@@ -50,7 +50,7 @@ function open_vpn() {
   fi
 
   ssh_cmd="sudo openvpn --config \"$config_file\" --auth-user-pass \"$credentials_temp_file\""
-  gnome-terminal -- bash -c "$ssh_cmd; exec bash"
+  gnome-terminal -- bash -c "$ssh_cmd; exec bash" &
 }
 
 ## MAIN #######################################################################
