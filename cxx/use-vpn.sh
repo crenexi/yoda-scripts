@@ -61,3 +61,6 @@ trap '[[ -n $credentials_temp_file ]] && rm -f "$credentials_temp_file"' EXIT
 verify_credentials
 store_credentials
 open_vpn
+
+# 1m before tmp credentials file is deleted
+sleep 60
