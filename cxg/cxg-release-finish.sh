@@ -5,6 +5,8 @@ source "$dir/helpers/helpers.sh"
 source "$dir/../utils/splash.sh"
 source "$dir/../utils/echo-utils.sh"
 
+url_cloudfront_home="https://us-east-1.console.aws.amazon.com/cloudfront/v3/home"
+
 ## FUNCTIONS ##################################################################
 
 function preflight_checks {
@@ -21,7 +23,7 @@ function preflight_checks {
 
 # Prompt to perform invalidation
 function prompt_invalidation() {
-  echo_callout "Invalidation" "$url_notion_projects"
+  echo_callout "Invalidation" "$url_cloudfront_home"
   read -p "Consider CloudFront invalidation for immediate updates. Done: (ENTER): "
 }
 
