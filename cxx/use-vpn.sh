@@ -49,9 +49,8 @@ function open_vpn() {
     error "Config file $config_file not found."
   fi
 
-  sudo openvpn --config "$config_file" --auth-user-pass "$credentials_temp_file" || {
-    error "Failed to connect."
-  }
+  ssh_cmd="sudo openvpn --config \"$config_file\" --auth-user-pass \"$credentials_temp_file\""
+  gnome-terminal -- bash -c "$ssh_cmd; exec bash"
 }
 
 ## MAIN #######################################################################
