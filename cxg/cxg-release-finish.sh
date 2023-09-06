@@ -66,8 +66,8 @@ function finish_release {
   git push origin develop --tags
 
   # Remove release
+  # Note: keep release on remote for keeping pipeline source-detection intact
   git branch -d release
-  git push origin --delete release
 
   # Push changes
   echo_success "✨ FINISHED RELEASE!"
