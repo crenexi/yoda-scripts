@@ -51,7 +51,9 @@ function start_release() {
   git pull origin develop
 
   # Create release
-  git flow release start "v${new_version}"
+  git flow release start "v${new_version}" || {
+    cancel 1 "Failed to perform 'git flow release start'!"
+  }
 }
 
 function bump_packagejson() {

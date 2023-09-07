@@ -25,19 +25,6 @@ function confirm_stage() {
   done
 }
 
-# Checkout/create stage
-function checkout_stage() {
-  git rev-parse --verify stage > /dev/null 2>&1
-  [ $? -eq 0 ] && git checkout stage || git checkout -b stage
-}
-
-# Complete merge
-function update_stage() {
-  git merge develop --no-edit
-  git push origin stage
-  echo_success "Merged changes from 'develop' to 'stage' and pushed to remote."
-}
-
 sync_develop
 confirm_stage
 checkout_stage

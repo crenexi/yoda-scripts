@@ -94,3 +94,16 @@ function prompt_notion() {
   echo_callout "Update Notion" "$url_notion_projects"
   read -p "Update Notion version. Done: (ENTER): "
 }
+
+# Checkout/create stage
+function checkout_stage() {
+  git rev-parse --verify stage > /dev/null 2>&1
+  [ $? -eq 0 ] && git checkout stage || git checkout -b stage
+}
+
+# Complete merge
+function update_stage() {
+  git merge develop --no-edit
+  git push origin stage
+  echo_success "Updated stage branch with latest develop"
+}
