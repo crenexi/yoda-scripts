@@ -47,7 +47,7 @@ function finish_release {
 
   # release->main
   git checkout main
-  git merge release
+  git merge --no-edit release
 
   # Tag release
   git tag -a "v${version}" -m "Release version ${version}"
@@ -59,7 +59,7 @@ function finish_release {
 
   # Backmerge into develop
   git checkout develop
-  git merge release
+  git merge --no-edit release
 
   # Sync develop
   git push origin develop
