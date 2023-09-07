@@ -10,7 +10,7 @@ openvpn_dir="/etc/openvpn/ovpn_udp/"
 server=${1:-"us9680"}
 proto=${2:-"udp"}
 
-## FUNCTIONS ##################################################################
+## HELPERS ####################################################################
 
 # Exit script
 function error() {
@@ -18,6 +18,8 @@ function error() {
   echo_error "$message"
   exit 1
 }
+
+## FUNCTIONS ##################################################################
 
 function verify_credentials() {
   # Ensure file exists
@@ -49,8 +51,7 @@ function open_vpn() {
     error "Config file $config_file not found."
   fi
 
-  ssh_cmd="sudo openvpn --config \"$config_file\" --auth-user-pass \"$credentials_temp_file\""
-  gnome-terminal -- bash -c "$ssh_cmd; exec bash" &
+  sudo openvpn --config "$config_file" --auth-user-pass "$credentials_temp_file"
 }
 
 ## MAIN #######################################################################

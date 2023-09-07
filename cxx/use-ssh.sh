@@ -63,11 +63,16 @@ function echo_locations() {
 }
 
 function open_ssh_session() {
+  local debug="true"
+
   echo_header "SSH" "clear"
   echo_callout "Location:" "$name"
 
-  ssh_cmd="ssh -i \"$pem_path\" \"$ssh_url\""
-  gnome-terminal -- bash -c "$ssh_cmd; exec bash" &
+  # SSH command
+  ssh_cmd="ssh"
+  if [ $debug == "true" ]; then ssh_cmd+=" -vvv"; fi
+  ssh_cmd+=" -i \"$pem_path\" \"$ssh_url\""
+  eval "$ssh_cmd"
 }
 
 function prompt_location() {
