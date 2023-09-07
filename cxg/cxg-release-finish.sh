@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
+source "$dir/cxg-stage.sh"
 source "$dir/helpers/helpers.sh"
 source "$dir/../utils/splash.sh"
 source "$dir/../utils/echo-utils.sh"
@@ -45,32 +46,18 @@ function finish_release {
   git checkout release
   git pull origin release
 
-  # release->main
-  git checkout main
-  git merge --no-edit release
-
-  # Tag release
-  git tag -a "v${version}" -m "Release version ${version}"
-
-  # Sync main
-  git push origin main
-  git push origin main --tags
-  echo_success "RELEASED v${version} AND PUSHED TAGS!"
-
-  # Backmerge into develop
-  git checkout develop
-  git merge --no-edit release
-
-  # Sync develop
-  git push origin develop
-  git push origin develop --tags
-
-  # Remove release
-  # Note: keep release on remote for keeping pipeline source-detection intact
-  git branch -d release
+  # Finish the git flow release
+  git flow release finish -m "Release version ${version}" "v${version}"
 
   # Push changes
+  git push origin develop main
+  git push origin --tags
   echo_success "✨ FINISHED RELEASE!"
+
+  # Updated staging
+  checkout_stage
+  update_stage
+  echo_success "Updated stage with latest release."
 
   # List branches
   echo "Local branches:"
