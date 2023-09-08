@@ -64,6 +64,12 @@ function bump_packagejson() {
   echo_success "Bumped version to v${new_version}!"
 }
 
+function on_complete() {
+  git checkout "release/v${new_version}"
+  echo_success "ALL DONE!"
+  list_branches
+}
+
 ## MAIN #######################################################################
 
 splash
@@ -71,3 +77,5 @@ preflight_checks
 prompt_version
 start_release
 bump_packagejson
+prompt_update_stage
+on_complete

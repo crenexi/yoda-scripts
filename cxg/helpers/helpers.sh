@@ -1,7 +1,5 @@
 #!/bin/bash
 
-url_notion_projects="https://www.notion.so/crenexi/9e7a6fc2be4b42499e5141ae44c250a0"
-
 # Exit script
 function cancel() {
   code=${1:-1}
@@ -89,12 +87,6 @@ function read_version() {
   fi
 }
 
-# Prompt to update Notion
-function prompt_notion() {
-  echo_callout "Update Notion" "$url_notion_projects"
-  read -p "Update Notion version. Done: (ENTER): "
-}
-
 # Checkout/create stage
 function checkout_stage() {
   git rev-parse --verify stage > /dev/null 2>&1
@@ -106,4 +98,30 @@ function update_stage() {
   git merge develop --no-edit
   git push origin stage
   echo_success "Updated stage branch with latest develop"
+}
+
+# Prompt user to proceed to stage
+function prompt_update_stage() {
+  while true; do
+    read -p "Stage v$version? [y/n]: " input
+    case "$input" in
+      [Yy]* )
+        checkout_stage
+        update_stage
+        break ;;
+      [Nn]* )
+        echo "Skipping stage."
+        break ;;
+    esac
+  done
+}
+
+# List branches
+function list_branches() {
+  echo "Local branches:"
+  git branch --list
+  echo "#/"; echo "/"
+  echo "Remote branches:"
+  git ls-remote --heads origin | awk '{print substr($2, 12)}'
+  echo "#/"; echo "/"
 }

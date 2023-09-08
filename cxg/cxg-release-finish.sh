@@ -1,10 +1,12 @@
 #!/bin/bash
 
 dir=$(dirname "$0")
+dir_content="$HOME/.cx/bin/utils/content"
 source "$dir/helpers/helpers.sh"
 source "$dir/../utils/splash.sh"
 source "$dir/../utils/echo-utils.sh"
 
+url_notion_projects="https://www.notion.so/crenexi/9e7a6fc2be4b42499e5141ae44c250a0"
 url_cloudfront_home="https://us-east-1.console.aws.amazon.com/cloudfront/v3/home"
 
 ## HELPERS ####################################################################
@@ -19,6 +21,24 @@ function git_editor() {
   esac
 }
 
+# Prompt to update Notion
+function prompt_notion() {
+  echo "##"
+  echo_callout "Update Notion" "$url_notion_projects"
+  echo_info "Update Notion version..."
+  read -p "Continue: (ENTER): "
+}
+
+# Prompt to perform invalidation
+function prompt_invalidation() {
+  echo "##"
+  echo_callout "Invalidation" "$url_cloudfront_home"
+  echo_info "Consider CloudFront invalidation..."
+  read -p "Continue: (ENTER): "
+}
+
+
+
 ## FUNCTIONS ##################################################################
 
 function preflight_checks {
@@ -31,12 +51,6 @@ function preflight_checks {
   # Release confirmation
   echo_success "READY TO RELEASE!"
   echo_warn "YOU'RE ABOUT TO RELEASE v${version}"
-}
-
-# Prompt to perform invalidation
-function prompt_invalidation() {
-  echo_callout "Invalidation" "$url_cloudfront_home"
-  read -p "Consider CloudFront invalidation for immediate updates. Done: (ENTER): "
 }
 
 function confirm_release {
@@ -64,28 +78,22 @@ function finish_release {
   git push origin develop main
   git push origin --tags
 
-  # Updated staging
-  checkout_stage
-  update_stage
+  # Update staging (optional)
+  prompt_update_stage
 
   # Cleanup
+  git checkout develop
   git_editor "reset"
-
-  # List branches
-  echo "Local branches:"
-  git branch --list
 }
 
 function on_complete() {
-  echo "###/"
-  echo "##/"
-  echo "#/"
-  echo_success "✨ FINISHED RELEASE!"
-  echo "#\\"
-  echo_header "NEXT STEPS"
-
+  cat "$dir_content/art_nyan.txt"
+  echo "\\"; echo "#\\"; echo "##\\"
+  echo_success "✨ FINISHED RELEASE!";
   prompt_notion
   prompt_invalidation
+  echo_success "ALL DONE!"
+  list_branches
 }
 
 ## MAIN #######################################################################
