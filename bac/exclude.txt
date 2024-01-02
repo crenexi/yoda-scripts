@@ -36,3 +36,4 @@ System-Backup/
 .minecraft
 SteamLibrary/
 Games/
+CF-Holding/

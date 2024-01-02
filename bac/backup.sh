@@ -39,12 +39,12 @@ function catch_config_dne() {
 }
 
 function catch_not_home() {
-  home_network="192.168.0"
+  home_network="10.0.0.209"
   device_interface="wlp0s20f3"
   current_ip=$(ip addr show dev $device_interface | grep -oP 'inet \K[\d.]+')
 
   if ! [[ $current_ip == $home_network* ]]; then
-    cancel "Home network not detected. Exiting."
+    cancel "Home network not detected. Exiting." 0 false
   fi
 }
 
@@ -77,7 +77,7 @@ function catch_recent_backup() {
 
     # If recent backup, exit
     if ! [ $time_diff -gt $interval ]; then
-      cancel "Recent backup performed. Skipping"
+      cancel "Recent backup performed. Skipping" 0 false
     fi
   fi
 }
@@ -86,6 +86,10 @@ function catch_recent_backup() {
 #### MISC HELPERS ###############################
 #################################################
 
+function debug_log() {
+  echo "Debug: $1"
+}
+
 function info() {
   echo "## ${1}"
 }
@@ -93,18 +97,24 @@ function info() {
 function info_stamped() {
   statused="$1" # verb indicating status
   more_info="$2" # for cancel message
+  notify=${3:-true} # Whether to send notification, default to true
 
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   time_human=$(date +"%B %-d at %-I:%M%P")
 
   # Notification and standard log
-  "$cxx_notify" "Backup $statused - $id" "$statused on $time_human! $more_info"
+  if [ "$notify" = true ]; then
+    "$cxx_notify" "Backup $statused - $id" "$statused on $time_human! $more_info"
+  fi
+
+  # Standard log
   info "$statused \"$id\" backup at $time_human! $more_info"
 }
 
 function cancel() {
   local exit_code=${2:-0}
-  info_stamped "Cancelled" "$1"
+  local notify=${3:-true}
+  info_stamped "Cancelled" "$1" "$notify"
   exit "$exit_code"
 }
 

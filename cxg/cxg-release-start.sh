@@ -77,5 +77,5 @@ preflight_checks
 prompt_version
 start_release
 bump_packagejson
-prompt_update_stage
+prompt_update_stage "release/v$new_version"
 on_complete

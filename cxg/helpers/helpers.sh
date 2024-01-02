@@ -95,20 +95,25 @@ function checkout_stage() {
 
 # Complete merge
 function update_stage() {
-  git merge develop --no-edit
+  local from_branch="$1"  # Accept the branch name as a parameter
+  git merge "$from_branch" --no-edit
   git push origin stage
-  echo_success "Updated stage branch with latest develop"
+  echo_success "Updated stage branch with latest from $from_branch"
 }
 
 # Prompt user to proceed to stage
 function prompt_update_stage() {
+  local from_branch="${1:-develop}" # Default to 'develop'
+
   while true; do
+    git checkout "$from_branch"
     read_version
-    read -p "Stage v$version? [y/n]: " input
+
+    read -p "Stage v$version from $from_branch? [y/n]: " input
     case "$input" in
       [Yy]* )
         checkout_stage
-        update_stage
+        update_stage "$from_branch"
         break ;;
       [Nn]* )
         echo "Skipping stage."
