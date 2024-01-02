@@ -103,6 +103,7 @@ function update_stage() {
 # Prompt user to proceed to stage
 function prompt_update_stage() {
   while true; do
+    read_version
     read -p "Stage v$version? [y/n]: " input
     case "$input" in
       [Yy]* )
