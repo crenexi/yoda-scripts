@@ -16,7 +16,7 @@ function notify() {
     local uid=$(id -u $user)
 
     # Crenexi-themed alert
-    icon="/home/crenexi/Documents/System-Assets/Icons/crenexi_fav_main.png"
+    icon="/home/crenexi/Pictures/Brand/PNG/CU/cu-fav-light.png"
     su -c "DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus notify-send -u normal -t 5000 -i \"$icon\" \"$1\" \"$2\"" -s /bin/sh $user
   fi
 }
