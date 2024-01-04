@@ -9,7 +9,7 @@ dest="$2"
 
 ## MAIN #######################################################################
 
-template_group="component"
+template_group="comp"
 
 ensure_jq_installed
 init_template_keys "$template_group"

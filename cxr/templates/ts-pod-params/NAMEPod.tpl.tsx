@@ -10,7 +10,7 @@ interface Params {
   param1?: string; // Assuming param1 is of type string, adjust as necessary.
 }
 
-const NAMEContainer: React.FC = () => {
+const NAMEPod: React.FC = () => {
   logger.debug('TODO: NAME');
 
   const dStatic = useDataStatic();
@@ -36,4 +36,4 @@ const NAMEContainer: React.FC = () => {
   return <NAME isReady={isReady} />;
 };
 
-export default NAMEContainer;
+export default NAMEPod;

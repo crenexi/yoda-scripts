@@ -6,20 +6,20 @@
 (Note: `jq` is a dependency)
 
 Generate components using presets.
-- **`cxr-component.sh`**
-- **`cxr-container.sh`**
+- **`cxr-comp.sh`**
+- **`cxr-pod.sh`**
 
 
 ## Usage
 
 ```bash
-cxr-component <component-name> <destination>
-cxr-component HelloWorld .
+cxr-comp <component-name> <destination>
+cxr-pod HelloWorld .
 ```
 
 ## Key Files
 
-- **cxr-component.sh**: User entry-point. Initiates creation process.
+- **cxr-comp.sh**: User entry-point. Initiates creation process.
 - **helpers/cp-template.sh**: Core logic. Copies templates and fills placeholders.
 - **helpers/helpers.sh**: Miscellaneous helper functions.
 - **templates/**: Component templates. Any file named `<filename>.tpl.<ext>` will be copied.

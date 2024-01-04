@@ -9,7 +9,7 @@ dest="$2"
 
 ## MAIN #######################################################################
 
-template_group="container"
+template_group="pod"
 
 ensure_jq_installed
 init_template_keys "$template_group"

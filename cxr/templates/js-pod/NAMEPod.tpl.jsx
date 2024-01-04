@@ -4,7 +4,7 @@ import useDataFirebase from '@hooks/use-data-firebase';
 import logger from '@services/logger';
 import NAME from './NAME';
 
-const NAMEContainer = () => {
+const NAMEPod = () => {
   logger.debug('TODO: NAME');
 
   const dStatic = useDataStatic();
@@ -19,4 +19,4 @@ const NAMEContainer = () => {
   return <NAME isReady={isReady} />;
 };
 
-export default NAMEContainer;
+export default NAMEPod;
