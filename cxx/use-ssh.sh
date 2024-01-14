@@ -63,7 +63,7 @@ function echo_locations() {
 }
 
 function open_ssh_session() {
-  local debug="true"
+  local debug="false"
 
   echo_header "SSH" "clear"
   echo_callout "Location:" "$name"
