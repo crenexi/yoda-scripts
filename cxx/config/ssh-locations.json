@@ -2,6 +2,6 @@
   {
     "name": "api.crenexi.com",
     "pem_path": "/home/crenexi/.ssh/ec2/api.crenexi.com.pem",
-    "ssh_url": "ec2-user@ec2-54-176-212-35.us-west-1.compute.amazonaws.com"
+    "ssh_url": "ubuntu@ec2-34-229-193-124.compute-1.amazonaws.com"
   }
 ]
