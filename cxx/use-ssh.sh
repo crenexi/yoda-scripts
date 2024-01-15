@@ -6,7 +6,7 @@ source "$dir/../utils/echo-utils.sh"
 
 ssh_locations_file="$dir/config/ssh-locations.json"
 
-## FUNCTIONS ##################################################################
+## HELPERS ####################################################################
 
 # Exit script
 function error() {
@@ -14,6 +14,15 @@ function error() {
   echo_error "$message"
   exit 1
 }
+
+# Graceful cleanup
+function cleanup() {
+  echo "System going to sleep, disconnecting VPN..."
+  exit 0
+}
+trap cleanup SIGTERM SIGHUP
+
+## FUNCTIONS ##################################################################
 
 # Validate JSON locations
 function validate_locations_json() {

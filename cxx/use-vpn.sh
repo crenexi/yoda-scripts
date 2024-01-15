@@ -12,12 +12,19 @@ proto=${2:-"udp"}
 
 ## HELPERS ####################################################################
 
-# Exit script
+# Error cleanup
 function error() {
   message=${1:-"Unknown error."}
   echo_error "$message"
   exit 1
 }
+
+# Graceful cleanup
+function cleanup() {
+  echo "System going to sleep, disconnecting VPN..."
+  exit 0
+}
+trap cleanup SIGTERM SIGHUP
 
 ## FUNCTIONS ##################################################################
 
