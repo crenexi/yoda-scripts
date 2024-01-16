@@ -19,12 +19,11 @@ function error() {
   exit 1
 }
 
-# Graceful cleanup
-function cleanup() {
-  echo "System going to sleep, disconnecting VPN..."
-  exit 0
+# Function to disconnect VPN
+function disconnect_vpn() {
+  echo "Disconnecting VPN..."
+  sudo killall openvpn
 }
-trap cleanup SIGTERM SIGHUP
 
 ## FUNCTIONS ##################################################################
 
@@ -66,9 +65,17 @@ function open_vpn() {
 # Cleanup in case of an error
 trap '[[ -n $credentials_temp_file ]] && rm -f "$credentials_temp_file"' EXIT
 
-verify_credentials
-store_credentials
-open_vpn
+case "$3" in
+  stop)
+    disconnect_vpn
+    exit 0
+    ;;
+  *)
+    verify_credentials
+    store_credentials
+    open_vpn
 
-# 1m before tmp credentials file is deleted
-sleep 60
+    # 1m before tmp credentials file is deleted
+    sleep 60
+    ;;
+esac
