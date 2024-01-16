@@ -7,8 +7,8 @@ source "$dir/../utils/echo-utils.sh"
 
 credentials="$HOME/.nordvpn-config"
 openvpn_dir="/etc/openvpn/ovpn_udp/"
-server=${1:-"us9680"}
-proto=${2:-"udp"}
+server="us9680"
+proto="udp"
 
 ## HELPERS ####################################################################
 
@@ -23,6 +23,14 @@ function error() {
 function disconnect_vpn() {
   echo "Disconnecting VPN..."
   sudo killall openvpn
+  sleep 2
+  exit 0
+}
+
+function cleanup_on_exit() {
+  # Your cleanup code here, like removing temp files
+  [[ -n $credentials_temp_file ]] && rm -f "$credentials_temp_file"
+  exit 0
 }
 
 ## FUNCTIONS ##################################################################
@@ -58,14 +66,15 @@ function open_vpn() {
   fi
 
   sudo openvpn --config "$config_file" --auth-user-pass "$credentials_temp_file"
+  openvpn_pid=$!
+  wait $openvpn_pid
 }
 
 ## MAIN #######################################################################
 
-# Cleanup in case of an error
-trap '[[ -n $credentials_temp_file ]] && rm -f "$credentials_temp_file"' EXIT
+trap cleanup_on_exit SIGINT
 
-case "$3" in
+case "$1" in
   stop)
     disconnect_vpn
     exit 0
@@ -75,7 +84,7 @@ case "$3" in
     store_credentials
     open_vpn
 
-    # 1m before tmp credentials file is deleted
-    sleep 60
+    # 2s before tmp credentials file is deleted
+    sleep 2
     ;;
 esac
