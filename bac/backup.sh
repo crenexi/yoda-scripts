@@ -176,6 +176,21 @@ function on_complete() {
   rm "$file_log_temp"
 }
 
+# Function to show a spinner while the backup is running
+function show_spinner() {
+  local pid=$1
+  local delay=0.1
+  local spinstr='|/-\'
+  while [ "$(ps a | awk '{print $1}' | grep "$pid")" ]; do
+    local temp=${spinstr#?}
+    printf " [%c]  " "$spinstr"
+    spinstr=$temp${spinstr%"$temp"}
+    sleep $delay
+    printf "\b\b\b\b\b\b"
+  done
+  printf "    \b\b\b\b"
+}
+
 #################################################
 ## BACKUP PROCESS ###############################
 #################################################
@@ -224,8 +239,14 @@ function run_backup() {
     [ -d $dest$src ] || mkdir -p $dest$src
 
     # Log each src backing up; for testing
-    # info "Backing up \"${src}\"..."
+    info "Backing up \"${src}\"..."
 
-    backup_from $src
+    # Run backup with spinner
+    backup_from "$src" &
+    pid=$!
+    show_spinner "$pid"
+    wait "$pid" # Wait for the backup to finish
   done
+
+  info "Backup completed."
 }
