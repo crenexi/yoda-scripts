@@ -1,39 +1,48 @@
-#### Basics
-.git
-.npm
-node_modules
-/lock
-/run
-/spool
-/log
-/var/log
-#### Trash/cache/temp
-.cache
-.Trash*
-Trash*
-Cache
-cache
-tmp
-temp
-*.tmp
-*.temp
-#### Code and VM
-.vscode
-.vmware
-VMware/
-#### App exclusions
-.config/google-chrome/
-.config/discord/
-.mozilla/firefox/
-Dropbox/
-snap/discord/
-snap/firefox/
-#### Misc exclusions
-System-Backup/
-.local/share/icons
-#### Games (Backup G)
-.steam
-.minecraft
-SteamLibrary/
-Games/
-CF-Holding/
+#### Basics (System and Development Files)
+.git                # Git repositories
+.npm                # Node.js package cache
+node_modules        # Node.js modules
+.lock               # Lock files
+/run                # Runtime files
+/spool              # Spool files
+/log                # Log files
+/var/log            # System logs
+
+#### Trash, Cache, and Temporary Files
+.cache              # Application cache files
+.Trash*             # Trash directories (hidden and regular)
+Trash*              # Trash directories (hidden and regular)
+Cache               # General cache folders
+cache               # More cache folders
+tmp                 # Temporary files
+temp                # Temporary directories
+*.tmp               # Temporary files
+*.temp              # Temporary files
+.dropbox-dist       # Dropbox application files
+.dropbox            # Dropbox configuration files
+.slack              # Slack application data
+.deno               # Deno cache and modules
+
+#### Development and Virtual Machine Files
+.vscode             # Visual Studio Code settings and extensions
+.vmware             # VMware data
+VMware/             # VMware data
+
+#### Application Data (Browsers, Cloud Storage, and Snaps)
+.config/google-chrome/  # Google Chrome configuration
+.config/discord/        # Discord configuration
+.mozilla/firefox/       # Firefox configuration
+Dropbox/                # Dropbox synced files
+snap/                   # Snap application data
+.nvm                    # Node Version Manager (NVM) data
+
+#### Miscellaneous Exclusions
+System-Backup/          # System backup files
+.local/share/icons      # Custom icon themes
+
+#### Games and Related Files
+.steam                  # Steam application data
+.minecraft              # Minecraft game data
+SteamLibrary/           # Steam game library
+Games/                  # General games folder
+CF-Holding/             # Game-specific holding folder
