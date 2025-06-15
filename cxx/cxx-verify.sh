@@ -18,7 +18,6 @@ verify "cmatrix"
 verify "curl"
 verify "wmctrl"
 verify "baobab"
-verify "chrome-gnome-shell"
 verify "spotify"
 verify "code"
 
